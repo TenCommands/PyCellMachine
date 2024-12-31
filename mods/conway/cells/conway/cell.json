@@ -1,0 +1,10 @@
+{
+    "name": "Conway",
+    "description": "Conway's Game of Life",
+    "texture": {
+        "0": "1.png",
+        "1": "0.png",
+        "2": "1.png",
+        "3": "0.png"
+    }
+}

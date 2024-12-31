@@ -1,0 +1,9 @@
+{
+    "format": 1,
+    "name": "Conway's GoL",
+    "description": "Conways Game of Life",
+    "author": "TauCommands",
+    "version": "1.0.0",
+    "update_url": "https://github.com/tencommands/pycellmachine/mods/conway",
+    "thumbnail_type": "gif"
+}
