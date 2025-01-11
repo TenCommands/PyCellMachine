@@ -28,6 +28,24 @@ class Object:
     
     def update(self):
         self.size((self.width, self.height))
+    
+    def draw_splices(self, splices, screen):
+        # Left side
+            screen.blit(splices['(0, 0)'], (self.rect.x, self.rect.y))
+            screen.blit(splices['(0, 1)'], (self.rect.x, self.rect.y + self.height/2 - splices['(0, 1)'].get_height()/2 + 1))
+            screen.blit(splices['(0, 2)'], (self.rect.x, self.rect.y + self.height - splices['(0, 2)'].get_height()))
+            # Middle (stretched)
+            middle_width = self.width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width() + 1
+            middle_top = pygame.transform.scale(splices['(1, 0)'], (middle_width, splices['(1, 0)'].get_height()))
+            middle_center = pygame.transform.scale(splices['(1, 1)'], (middle_width, splices['(1, 1)'].get_height() + 1))
+            middle_bottom = pygame.transform.scale(splices['(1, 2)'], (middle_width, splices['(1, 2)'].get_height()))
+            screen.blit(middle_top, (self.rect.x + splices['(0, 0)'].get_width(), self.rect.y))
+            screen.blit(middle_center, (self.rect.x + splices['(0, 1)'].get_width(), self.rect.y + self.height/2 - middle_center.get_height()/2))
+            screen.blit(middle_bottom, (self.rect.x + splices['(0, 2)'].get_width(), self.rect.y + self.height - middle_bottom.get_height()))
+            # Right side
+            screen.blit(splices['(2, 0)'], (self.rect.x + self.width - splices['(2, 0)'].get_width(), self.rect.y))
+            screen.blit(splices['(2, 1)'], (self.rect.x + self.width - splices['(2, 1)'].get_width(), self.rect.y + self.height/2 - splices['(2, 1)'].get_height()/2 + 1))
+            screen.blit(splices['(2, 2)'], (self.rect.x + self.width - splices['(2, 2)'].get_width(), self.rect.y + self.height - splices['(2, 2)'].get_height()))
 
 
 class Button(Object):
@@ -65,23 +83,10 @@ class Button(Object):
                 splices = self.texture_splices[1]
             else:
                 splices = self.texture_splices[0]
+            
+            self.draw_splices(splices, screen)
 
-            # Left side
-            screen.blit(splices['(0, 0)'], (self.rect.x, self.rect.y))
-            screen.blit(splices['(0, 1)'], (self.rect.x, self.rect.y + self.height/2 - splices['(0, 1)'].get_height()/2 + 1))
-            screen.blit(splices['(0, 2)'], (self.rect.x, self.rect.y + self.height - splices['(0, 2)'].get_height()))
-            # Middle (stretched)
-            middle_width = self.width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width() + 1
-            middle_top = pygame.transform.scale(splices['(1, 0)'], (middle_width, splices['(1, 0)'].get_height()))
-            middle_center = pygame.transform.scale(splices['(1, 1)'], (middle_width, splices['(1, 1)'].get_height() + 1))
-            middle_bottom = pygame.transform.scale(splices['(1, 2)'], (middle_width, splices['(1, 2)'].get_height()))
-            screen.blit(middle_top, (self.rect.x + splices['(0, 0)'].get_width(), self.rect.y))
-            screen.blit(middle_center, (self.rect.x + splices['(0, 1)'].get_width(), self.rect.y + self.height/2 - middle_center.get_height()/2))
-            screen.blit(middle_bottom, (self.rect.x + splices['(0, 2)'].get_width(), self.rect.y + self.height - middle_bottom.get_height()))
-            # Right side
-            screen.blit(splices['(2, 0)'], (self.rect.x + self.width - splices['(2, 0)'].get_width(), self.rect.y))
-            screen.blit(splices['(2, 1)'], (self.rect.x + self.width - splices['(2, 1)'].get_width(), self.rect.y + self.height/2 - splices['(2, 1)'].get_height()/2 + 1))
-            screen.blit(splices['(2, 2)'], (self.rect.x + self.width - splices['(2, 2)'].get_width(), self.rect.y + self.height - splices['(2, 2)'].get_height()))
+            
 
         text = self.font.render(self.text, True, self.font_color)
         text_rect = text.get_rect(center=self.rect.center)

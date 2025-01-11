@@ -18,9 +18,3 @@ def splice(texture, splice_json):
              width,
              height))
     return slices
-
-
-#print(splice(
-#    r"texturepacks\default\assets\button.png",
-#    r"texturepacks\default\data\button.json"
-#))
