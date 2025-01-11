@@ -29,23 +29,23 @@ class Object:
     def update(self):
         self.size((self.width, self.height))
     
-    def draw_splices(self, splices, screen):
+    def draw_splices(self, splices, screen, rect, width, height):
         # Left side
-            screen.blit(splices['(0, 0)'], (self.rect.x, self.rect.y))
-            screen.blit(splices['(0, 1)'], (self.rect.x, self.rect.y + self.height/2 - splices['(0, 1)'].get_height()/2 + 1))
-            screen.blit(splices['(0, 2)'], (self.rect.x, self.rect.y + self.height - splices['(0, 2)'].get_height()))
+            screen.blit(splices['(0, 0)'], (rect.x, rect.y))
+            screen.blit(splices['(0, 1)'], (rect.x, rect.y + height/2 - splices['(0, 1)'].get_height()/2 + 1))
+            screen.blit(splices['(0, 2)'], (rect.x, rect.y + height - splices['(0, 2)'].get_height()))
             # Middle (stretched)
-            middle_width = self.width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width() + 1
-            middle_top = pygame.transform.scale(splices['(1, 0)'], (middle_width, splices['(1, 0)'].get_height()))
+            middle_width = width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width() + 1
+            middle_top =    pygame.transform.scale(splices['(1, 0)'], (middle_width, splices['(1, 0)'].get_height()))
             middle_center = pygame.transform.scale(splices['(1, 1)'], (middle_width, splices['(1, 1)'].get_height() + 1))
             middle_bottom = pygame.transform.scale(splices['(1, 2)'], (middle_width, splices['(1, 2)'].get_height()))
-            screen.blit(middle_top, (self.rect.x + splices['(0, 0)'].get_width(), self.rect.y))
-            screen.blit(middle_center, (self.rect.x + splices['(0, 1)'].get_width(), self.rect.y + self.height/2 - middle_center.get_height()/2))
-            screen.blit(middle_bottom, (self.rect.x + splices['(0, 2)'].get_width(), self.rect.y + self.height - middle_bottom.get_height()))
+            screen.blit(middle_top, (rect.x + splices['(0, 0)'].get_width(), rect.y))
+            screen.blit(middle_center, (rect.x + splices['(0, 1)'].get_width(), rect.y + height/2 - middle_center.get_height()/2))
+            screen.blit(middle_bottom, (rect.x + splices['(0, 2)'].get_width(), rect.y + height - middle_bottom.get_height()))
             # Right side
-            screen.blit(splices['(2, 0)'], (self.rect.x + self.width - splices['(2, 0)'].get_width(), self.rect.y))
-            screen.blit(splices['(2, 1)'], (self.rect.x + self.width - splices['(2, 1)'].get_width(), self.rect.y + self.height/2 - splices['(2, 1)'].get_height()/2 + 1))
-            screen.blit(splices['(2, 2)'], (self.rect.x + self.width - splices['(2, 2)'].get_width(), self.rect.y + self.height - splices['(2, 2)'].get_height()))
+            screen.blit(splices['(2, 0)'], (rect.x + width - splices['(2, 0)'].get_width(), rect.y))
+            screen.blit(splices['(2, 1)'], (rect.x + width - splices['(2, 1)'].get_width(), rect.y + height/2 - splices['(2, 1)'].get_height()/2 + 1))
+            screen.blit(splices['(2, 2)'], (rect.x + width - splices['(2, 2)'].get_width(), rect.y + height - splices['(2, 2)'].get_height()))
 
 
 class Button(Object):
@@ -84,9 +84,7 @@ class Button(Object):
             else:
                 splices = self.texture_splices[0]
             
-            self.draw_splices(splices, screen)
-
-            
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
 
         text = self.font.render(self.text, True, self.font_color)
         text_rect = text.get_rect(center=self.rect.center)
@@ -104,7 +102,7 @@ class Slider(Object):
         if texture == None:
             self.color = color[0]
             self.hover_color = color[1]
-            self.bar_color = color[2]
+            self.chip_color = color[2]
             self.texture = None
             self.texture_splices = None
         else:
@@ -115,23 +113,23 @@ class Slider(Object):
                 tx.splice(self.texture, texture_splices[2])
             ]
 
-        self.bars = []
+        self.chips = []
         for i in range(len(values)):
             # add rect to self.bar_positions for each value
-            self.bars.append(
-                pygame.Rect(self.x + (self.width/len(values))*i - self.width/2 + (self.width/len(values))/2,
+            self.chips.append(
+                pygame.Rect(self.x + (self.width/len(values))*i - self.width/2 + (self.width/len(values))/2 - 7.5,
                             self.y - self.height/2,
-                            self.width/len(values)/(len(values)*2),
+                            15,
                             self.height)
             )
 
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
 
         # create rect for the current value
-        self.value_rect = pygame.Rect(self.x + (self.width/len(values))*self.value - self.width/2 + (self.width/len(values))/2 - 5,
-                            self.y - self.height/2 - 5,
-                            self.width/len(values)/(len(values)*2) + 10,
-                            self.height + 10)
+        self.value_rect = pygame.Rect(self.x + (self.width/len(values))*self.value - self.width/2 + (self.width/len(values))/2 - 11.5,
+                            self.y - self.height/2 - 4,
+                            23,
+                            self.height + 8)
 
     def draw(self, screen):
         if self.texture == None:
@@ -140,14 +138,18 @@ class Slider(Object):
             else:
                 pygame.draw.rect(screen, self.color, self.rect)
             # draw bars in self.bars
-            for i in range(len(self.bars)):
-                pygame.draw.rect(screen, self.bar_color, self.bars[i])
-            pygame.draw.rect(screen, self.bar_color, self.value_rect)
-        
-        
-
-
-
+            for i in range(len(self.chips)):
+                pygame.draw.rect(screen, self.chip_color, self.chips[i])
+            pygame.draw.rect(screen, self.chip_color, self.value_rect)
+        else:
+            splices = self.texture_splices[0]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+            splices = self.texture_splices[1]
+            # draw bars in self.bars
+            for i in range(len(self.chips)):
+                self.draw_splices(splices, screen, self.chips[i], self.chips[i].width, self.chips[i].height)
+            splices = self.texture_splices[2]
+            self.draw_splices(splices, screen, self.value_rect, self.value_rect.width, self.value_rect.height)
 
 class Screen:
     def __init__(self, screen):

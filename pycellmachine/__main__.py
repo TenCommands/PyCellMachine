@@ -80,8 +80,13 @@ class SettingsMenu():
             "test_slider",
             (300, 200),
             (200, 30),
-            color=[(100,100,100),(50,50,50),(255,255,255)],
-            values=range(10),
+            texture=r"texturepacks\default\assets\slider.png",
+            texture_splices=[
+                r"texturepacks\default\data\slider.json",
+                r"texturepacks\default\data\slider_chip.json",
+                r"texturepacks\default\data\slider_bar.json"
+            ],
+            values=range(5),
             default=3,
         ), "slider")
     def draw(self):
