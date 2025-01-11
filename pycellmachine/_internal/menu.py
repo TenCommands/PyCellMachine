@@ -10,7 +10,7 @@ def window_size():
     return (w, h)
 
 class Object:
-    def is_clicked(self):
+    def is_hover(self):
         return self.rect.collidepoint(pygame.mouse.get_pos())
     
     def move(self, pos):
@@ -56,7 +56,7 @@ class Button(Object):
     
     def draw(self, screen):
         if self.texture == None:
-            if self.rect.collidepoint(pygame.mouse.get_pos()):
+            if self.is_hover():
                 pygame.draw.rect(screen, self.hover_color, self.rect)
             else:
                 pygame.draw.rect(screen, self.color, self.rect)
@@ -110,26 +110,35 @@ class Slider(Object):
                 tx.splice(self.texture, texture_splices[2])
             ]
 
-        self.bar_positions = []
-        for i in len(values):
+        self.bars = []
+        for i in range(len(values)):
             # add rect to self.bar_positions for each value
-            self.bar_positions.append(
-                pygame.Rect(self.x - self.width/2 + (self.width/len(values))*i, self.y - self.height/2, self.width/len(values), self.height)
+            self.bars.append(
+                pygame.Rect(self.x + (self.width/len(values))*i - self.width/2 + (self.width/len(values))/2,
+                            self.y - self.height/2,
+                            self.width/len(values)/(len(values)*2),
+                            self.height)
             )
 
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
 
         # create rect for the current value
-        self.value_rect = pygame.Rect(self.x - self.width/2 + (self.width/len(values))*self.value, self.y - self.height/2, self.width/len(values), self.height)
+        self.value_rect = pygame.Rect(self.x + (self.width/len(values))*self.value - self.width/2 + (self.width/len(values))/2 - 5,
+                            self.y - self.height/2 - 5,
+                            self.width/len(values)/(len(values)*2) + 10,
+                            self.height + 10)
 
     def draw(self, screen):
         if self.texture == None:
-            if self.rect.collidepoint(pygame.mouse.get_pos()):
+            if self.is_hover():
                 pygame.draw.rect(screen, self.hover_color, self.rect)
             else:
                 pygame.draw.rect(screen, self.color, self.rect)
-        # draw bar at value position
-        pygame.draw.rect(screen, self.bar_color, (self.bar_positions[self.value], (1, self.height)))
+            # draw bars in self.bars
+            for i in range(len(self.bars)):
+                pygame.draw.rect(screen, self.bar_color, self.bars[i])
+            pygame.draw.rect(screen, self.bar_color, self.value_rect)
+        
         
 
 

@@ -54,7 +54,7 @@ class MainMenu():
         self.menu.draw()
     def events(self, event):
         for button in self.menu.objects['button']:
-            if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+            if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
                 if button.id == "exit_button":
                     pygame.quit()
                     sys.exit()
@@ -69,7 +69,11 @@ class SettingsMenu():
             "back_button",
             (300, 300),
             (200, 30),
-            color=[(100,100,100),(50,50,50)],
+            texture=r"texturepacks\default\assets\button.png",
+            texture_splices=[
+                r"texturepacks\default\data\button_normal.json",
+                r"texturepacks\default\data\button_hover.json"
+            ],
             text_size=20, font_color=(255,255,255), text='Back', font='Arial'
         ), "button")
         self.menu.add_object(menu.Slider(
@@ -78,13 +82,13 @@ class SettingsMenu():
             (200, 30),
             color=[(100,100,100),(50,50,50),(255,255,255)],
             values=range(10),
-            default=5,
+            default=3,
         ), "slider")
     def draw(self):
         self.menu.draw()
     def events(self, event):
         for button in self.menu.objects['button']:
-            if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+            if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
                 if button.id == "back_button":
                     global game_menu
                     game_menu = MainMenu()
