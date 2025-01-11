@@ -72,6 +72,14 @@ class SettingsMenu():
             color=[(100,100,100),(50,50,50)],
             text_size=20, font_color=(255,255,255), text='Back', font='Arial'
         ), "button")
+        self.menu.add_object(menu.Slider(
+            "test_slider",
+            (300, 200),
+            (200, 30),
+            color=[(100,100,100),(50,50,50),(255,255,255)],
+            values=range(10),
+            default=5,
+        ), "slider")
     def draw(self):
         self.menu.draw()
     def events(self, event):

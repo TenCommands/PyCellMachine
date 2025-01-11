@@ -87,25 +87,47 @@ class Button(Object):
         text_rect = text.get_rect(center=self.rect.center)
         screen.blit(text, text_rect)
 
-
-
-        text = self.font.render(self.text, True, self.font_color)
-        text_rect = text.get_rect(center=self.rect.center)
-        screen.blit(text, text_rect)
-
 class Slider(Object):
-    def _init__(self, id, start, end, step, width, height, color, hover_color, font_color):
+    def __init__(self, id, pos, size, values, default=0, color=[(100,100,100),(50,50,50),(255,255,255)], texture=None, texture_splices=None):
         self.id = id
-        self.start = start
-        self.end = end
-        self.step = step
-        self.width = width
-        self.height = height
-        self.color = color
-        self.hover_color = hover_color
-        self.font = pygame.font.SysFont('Arial', 20)
-        self.font_color = font_color
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.x = pos[0]
+        self.y = pos[1]
+        self.values = values,
+        self.value = default
+        self.width = size[0]
+        self.height = size[1]
+        if texture == None:
+            self.color = color[0]
+            self.hover_color = color[1]
+            self.bar_color = color[2]
+            self.texture = None
+            self.texture_splices = None
+        else:
+            self.texture = pygame.image.load(texture).convert()
+            self.texture_splices = [
+                tx.splice(self.texture, texture_splices[0]),
+                tx.splice(self.texture, texture_splices[1]),
+                tx.splice(self.texture, texture_splices[2])
+            ]
+
+        self.bar_positions = []
+        for x in range(self.x, self.x + self.width):
+            self.bar_positions.append((x, self.y))
+
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+    
+    def draw(self, screen):
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(screen, self.hover_color, self.rect)
+        else:
+            pygame.draw.rect(screen, self.color, self.rect)
+        # draw bar at value position
+        pygame.draw.rect(screen, self.bar_color, (self.bar_positions[self.value], (1, self.height)))
+
+        
+
+
+
 
 class Screen:
     def __init__(self, screen):
