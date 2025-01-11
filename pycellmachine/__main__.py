@@ -1,7 +1,7 @@
 import pygame
 import sys
-from src import menu
-from src import textures as tx
+from ._internal import menu
+from ._internal import textures as tx
 
 screen = pygame.display.set_mode(menu.display_size(), pygame.RESIZABLE)
 

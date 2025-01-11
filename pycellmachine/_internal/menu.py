@@ -1,6 +1,6 @@
 import pygame, sys
 from win32api import GetSystemMetrics
-import src.textures as tx
+from . import textures as tx
 
 def display_size():
     return (GetSystemMetrics(0), GetSystemMetrics(1))
@@ -111,19 +111,25 @@ class Slider(Object):
             ]
 
         self.bar_positions = []
-        for x in range(self.x, self.x + self.width):
-            self.bar_positions.append((x, self.y))
+        for i in len(values):
+            # add rect to self.bar_positions for each value
+            self.bar_positions.append(
+                pygame.Rect(self.x - self.width/2 + (self.width/len(values))*i, self.y - self.height/2, self.width/len(values), self.height)
+            )
 
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
-    
+
+        # create rect for the current value
+        self.value_rect = pygame.Rect(self.x - self.width/2 + (self.width/len(values))*self.value, self.y - self.height/2, self.width/len(values), self.height)
+
     def draw(self, screen):
-        if self.rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(screen, self.hover_color, self.rect)
-        else:
-            pygame.draw.rect(screen, self.color, self.rect)
+        if self.texture == None:
+            if self.rect.collidepoint(pygame.mouse.get_pos()):
+                pygame.draw.rect(screen, self.hover_color, self.rect)
+            else:
+                pygame.draw.rect(screen, self.color, self.rect)
         # draw bar at value position
         pygame.draw.rect(screen, self.bar_color, (self.bar_positions[self.value], (1, self.height)))
-
         
 
 

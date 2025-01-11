@@ -1,6 +1,6 @@
-import pycellmachine as pcm
+from pycellmachine import Cell
 
-class ConwayCell(pcm.Cell):
+class ConwayCell(Cell):
     def __init__(self, x, y, rotation=0):
         super().__init__(x, y, rotation)
         self.alive = False
