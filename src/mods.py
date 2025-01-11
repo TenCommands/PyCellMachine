@@ -28,13 +28,13 @@ def format(type, input):
 
 
 class Mod():
-    def __init__(self, format, name, description, author, version, update_url, thumbnail_type):
+    def __init__(self, format, name, description, author, version, github_url, thumbnail_type):
         self.format = format
         self.name = name
         self.description = description
         self.author = author
         self.version = version
-        self.update_url = update_url
+        self.github_url = github_url
         self.thumbnail_type = thumbnail_type
 
     def _update(self):
@@ -52,6 +52,6 @@ for mod in os.listdir("mods"):
             description=mod_info['description'],
             author=mod_info['author'],
             version=mod_info['version'],
-            update_url=mod_info['update_url'],
+            github_url=mod_info['update_url'],
             thumbnail_type=mod_info['thumbnail_type']
         ))

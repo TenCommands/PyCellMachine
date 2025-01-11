@@ -1,0 +1,9 @@
+{
+    "format": 1,
+    "name": "Default",
+    "description": "Default Cells",
+    "author": "TauCommands",
+    "version": "1.0.0",
+    "update_url": "https://github.com/tencommands/pycellmachine/mods/default",
+    "thumbnail_type": "png"
+}
