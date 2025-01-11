@@ -1,6 +1,7 @@
 import pygame
 import sys
 from src import menu
+from src import textures as tx
 
 screen = pygame.display.set_mode(menu.display_size(), pygame.RESIZABLE)
 
@@ -23,21 +24,62 @@ def default_events(event):
 class MainMenu():
     def __init__(self):
         self.menu = menu.Screen(screen)
+        # Leave Game Button #
         self.menu.add_object(menu.Button(
             "exit_button",
             (300, 300),
             (200, 30),
-            color=[(100,100,100),(50,50,50)],
+            texture=r"texturepacks\default\assets\button.png",
+            texture_splices=[
+                r"texturepacks\default\data\button_normal.json",
+                r"texturepacks\default\data\button_hover.json"
+            ],
             text_size=20, font_color=(255,255,255), text='Leave Game', font='Arial'
         ), "button")
+
+        # Settings Button #
+        self.menu.add_object(menu.Button(
+            "settings_button",
+            (300, 350),
+            (200, 30),
+            texture=r"texturepacks\default\assets\button.png",
+            texture_splices=[
+                r"texturepacks\default\data\button_normal.json",
+                r"texturepacks\default\data\button_hover.json"
+            ],
+            text_size=20, font_color=(255,255,255), text='Settings', font='Arial'
+        ), "button")
+
     def draw(self):
         self.menu.draw()
-    def events(self):
+    def events(self, event):
         for button in self.menu.objects['button']:
-            if button.is_clicked():
+            if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
                 if button.id == "exit_button":
                     pygame.quit()
                     sys.exit()
+                if button.id == "settings_button":
+                    global game_menu
+                    game_menu = SettingsMenu()
+
+class SettingsMenu():
+    def __init__(self):
+        self.menu = menu.Screen(screen)
+        self.menu.add_object(menu.Button(
+            "back_button",
+            (300, 300),
+            (200, 30),
+            color=[(100,100,100),(50,50,50)],
+            text_size=20, font_color=(255,255,255), text='Back', font='Arial'
+        ), "button")
+    def draw(self):
+        self.menu.draw()
+    def events(self, event):
+        for button in self.menu.objects['button']:
+            if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+                if button.id == "back_button":
+                    global game_menu
+                    game_menu = MainMenu()
 
 game_menu = MainMenu()
 
@@ -47,7 +89,7 @@ def main():
 
         for event in pygame.event.get():
             default_events(event)
-            game_menu.events()
+            game_menu.events(event)
         
         game_menu.draw()
         pygame.display.update()
