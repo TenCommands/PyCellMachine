@@ -119,12 +119,12 @@ class SettingsMenu():
         ), "keybind")
         self.menu.add_object(menu.Dropdown(
             "test_dropdown",
-            (500, 100),
+            (800, 500),
             (200, 50),
             texture=r"texturepacks\default\assets\dropdown.png",
             texture_splices=[
-                r"texturepacks\default\data\keybind_normal.json",
-                r"texturepacks\default\data\keybind_hover.json"
+                r"texturepacks\default\data\dropdown_normal.json",
+                r"texturepacks\default\data\dropdown_hover.json"
             ],
             text_size=20, font_color=(255,255,255), font='Arial',
             options=["Option 1", "Option 2", "Option 3"],

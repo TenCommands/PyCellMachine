@@ -249,11 +249,13 @@ class Dropdown(Object):
             # render all possible values
             splices = self.texture_splices[0]
             
+            box_rect = pygame.Rect(self.x - self.width/2, self.y + self.height/2, self.width, self.height * len(self.values))
+            self.draw_splices(splices, screen, box_rect, self.width, self.height * len(self.values))
+
             for i, value in enumerate(self.values):
                 text = self.font.render(str(value), True, self.font_color)
                 text_rect = text.get_rect(center=(self.rect.center[0], self.rect.center[1] + (i * self.height + self.height)))
                 box_rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2 + (i * self.height + self.height),self.width, self.height)
-                self.draw_splices(splices, screen, box_rect, self.width, self.height)
                 screen.blit(text, text_rect)
                 if box_rect.collidepoint(pygame.mouse.get_pos()):
                     self.hovering = i
