@@ -20,32 +20,34 @@ class Object:
         # remake rect object with the new position at the center
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
 
-    
     def size(self, size):
         self.width = size[0]
         self.height = size[1]
         self.move((self.x, self.y))
     
-    def update(self):
-        self.size((self.width, self.height))
-    
     def draw_splices(self, splices, screen, rect, width, height):
         # Left side
-            screen.blit(splices['(0, 0)'], (rect.x, rect.y))
-            screen.blit(splices['(0, 1)'], (rect.x, rect.y + height/2 - splices['(0, 1)'].get_height()/2 + 1))
-            screen.blit(splices['(0, 2)'], (rect.x, rect.y + height - splices['(0, 2)'].get_height()))
-            # Middle (stretched)
-            middle_width = width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width() + 1
-            middle_top =    pygame.transform.scale(splices['(1, 0)'], (middle_width, splices['(1, 0)'].get_height()))
-            middle_center = pygame.transform.scale(splices['(1, 1)'], (middle_width, splices['(1, 1)'].get_height() + 1))
-            middle_bottom = pygame.transform.scale(splices['(1, 2)'], (middle_width, splices['(1, 2)'].get_height()))
-            screen.blit(middle_top, (rect.x + splices['(0, 0)'].get_width(), rect.y))
-            screen.blit(middle_center, (rect.x + splices['(0, 1)'].get_width(), rect.y + height/2 - middle_center.get_height()/2))
-            screen.blit(middle_bottom, (rect.x + splices['(0, 2)'].get_width(), rect.y + height - middle_bottom.get_height()))
-            # Right side
-            screen.blit(splices['(2, 0)'], (rect.x + width - splices['(2, 0)'].get_width(), rect.y))
-            screen.blit(splices['(2, 1)'], (rect.x + width - splices['(2, 1)'].get_width(), rect.y + height/2 - splices['(2, 1)'].get_height()/2 + 1))
-            screen.blit(splices['(2, 2)'], (rect.x + width - splices['(2, 2)'].get_width(), rect.y + height - splices['(2, 2)'].get_height()))
+        screen.blit(splices['(0, 0)'], (rect.x, rect.y))
+        screen.blit(pygame.transform.scale(splices['(0, 1)'], (splices['(0, 1)'].get_width(), height - splices['(0, 0)'].get_height() - splices['(0, 2)'].get_height())), (rect.x, rect.y + splices['(0, 0)'].get_height()))
+        screen.blit(splices['(0, 2)'], (rect.x, rect.y + height - splices['(0, 2)'].get_height()))
+
+        # Middle (stretched both horizontally and vertically)
+        middle_width = width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width() + 1
+        middle_height = height - splices['(1, 0)'].get_height() - splices['(1, 2)'].get_height() + 1
+
+        middle_top = pygame.transform.scale(splices['(1, 0)'], (middle_width, splices['(1, 0)'].get_height()))
+        middle_center = pygame.transform.scale(splices['(1, 1)'], (middle_width, middle_height))
+        middle_bottom = pygame.transform.scale(splices['(1, 2)'], (middle_width, splices['(1, 2)'].get_height()))
+
+        screen.blit(middle_top, (rect.x + splices['(0, 0)'].get_width(), rect.y))
+        screen.blit(middle_center, (rect.x + splices['(0, 1)'].get_width(), rect.y + splices['(1, 0)'].get_height()))
+        screen.blit(middle_bottom, (rect.x + splices['(0, 2)'].get_width(), rect.y + height - middle_bottom.get_height()))
+
+        # Right side
+        screen.blit(splices['(2, 0)'], (rect.x + width - splices['(2, 0)'].get_width(), rect.y))
+        screen.blit(pygame.transform.scale(splices['(2, 1)'], (splices['(2, 1)'].get_width(), height - splices['(2, 0)'].get_height() - splices['(2, 2)'].get_height())), (rect.x + width - splices['(2, 1)'].get_width(), rect.y + splices['(2, 0)'].get_height()))
+        screen.blit(splices['(2, 2)'], (rect.x + width - splices['(2, 2)'].get_width(), rect.y + height - splices['(2, 2)'].get_height()))
+
 
 
 class Button(Object):
@@ -89,9 +91,13 @@ class Button(Object):
         text = self.font.render(self.text, True, self.font_color)
         text_rect = text.get_rect(center=self.rect.center)
         screen.blit(text, text_rect)
+    
+    def update(self, event):
+        pass
 
 class Slider(Object):
     def __init__(self, id, pos, size, values, default=0, color=[(100,100,100),(50,50,50),(255,255,255)], texture=None, texture_splices=None):
+        self.clicked = False
         self.id = id
         self.x = pos[0]
         self.y = pos[1]
@@ -126,10 +132,10 @@ class Slider(Object):
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
 
         # create rect for the current value
-        self.value_rect = pygame.Rect(self.x + (self.width/len(values))*self.value - self.width/2 + (self.width/len(values))/2 - 11.5,
+        self.value_rect = pygame.Rect(self.x + (self.width/len(values))*self.value - self.width/2 + (self.width/len(values))/2 - 7.5,
                             self.y - self.height/2 - 4,
-                            23,
-                            self.height + 8)
+                            15,
+                            self.height + 6)
 
     def draw(self, screen):
         if self.texture == None:
@@ -151,6 +157,28 @@ class Slider(Object):
             splices = self.texture_splices[2]
             self.draw_splices(splices, screen, self.value_rect, self.value_rect.width, self.value_rect.height)
 
+    def update(self, event):
+        if (event.type == pygame.MOUSEBUTTONDOWN and self.is_hover()) or (event.type == pygame.MOUSEMOTION and self.clicked):
+            self.clicked = True
+
+            # set sorted_chips to sort self.chips based on their x distance from the mouse position
+            sorted_chips = sorted(self.chips, key=lambda chip: abs(chip.x - pygame.mouse.get_pos()[0]))
+
+            for i in range(len(sorted_chips)):
+                if self.chips[i] == sorted_chips[0]:
+                    values = self.values[0]
+                    self.value = i
+                    self.value_rect = pygame.Rect(self.x + (self.width/len(values))*self.value - self.width/2 + (self.width/len(values))/2 - 7.5,
+                        self.y - self.height/2 - 4,
+                        15,
+                        self.height + 6)
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.clicked = False
+    
+    def get_value(self):
+        return self.values[self.value]
+
 class Screen:
     def __init__(self, screen):
         pygame.font.init()
@@ -166,5 +194,9 @@ class Screen:
     def draw(self):
         for type in self.objects:
             for object in self.objects[type]:
-                object.update()
                 object.draw(self.screen)
+    
+    def update(self, event):
+        for type in self.objects:
+            for object in self.objects[type]:
+                object.update(event)

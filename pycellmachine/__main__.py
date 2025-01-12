@@ -21,6 +21,11 @@ def default_events(event):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
         pygame.display.toggle_fullscreen()
 
+def update(self, event):
+    for type in self.menu.objects:
+        for object in self.menu.objects[type]:
+            object.update(event)
+
 class MainMenu():
     def __init__(self):
         self.menu = menu.Screen(screen)
@@ -41,7 +46,7 @@ class MainMenu():
         self.menu.add_object(menu.Button(
             "settings_button",
             (300, 350),
-            (200, 30),
+            (200, 60),
             texture=r"texturepacks\default\assets\button.png",
             texture_splices=[
                 r"texturepacks\default\data\button_normal.json",
@@ -53,6 +58,7 @@ class MainMenu():
     def draw(self):
         self.menu.draw()
     def events(self, event):
+        update(self, event)
         for button in self.menu.objects['button']:
             if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
                 if button.id == "exit_button":
@@ -79,7 +85,7 @@ class SettingsMenu():
         self.menu.add_object(menu.Slider(
             "test_slider",
             (300, 200),
-            (200, 30),
+            (500, 50),
             texture=r"texturepacks\default\assets\slider.png",
             texture_splices=[
                 r"texturepacks\default\data\slider.json",
@@ -92,13 +98,14 @@ class SettingsMenu():
     def draw(self):
         self.menu.draw()
     def events(self, event):
+        update(self, event)
         for button in self.menu.objects['button']:
             if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
                 if button.id == "back_button":
                     global game_menu
                     game_menu = MainMenu()
 
-game_menu = MainMenu()
+game_menu = SettingsMenu()
 
 def main():
     while True:
@@ -109,6 +116,8 @@ def main():
             game_menu.events(event)
         
         game_menu.draw()
+        
+        
         pygame.display.update()
 
         dt = delta_time(clock, 60)
