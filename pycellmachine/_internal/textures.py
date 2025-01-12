@@ -1,4 +1,5 @@
 import pygame, sys, json
+from . import settings
 
 pygame.init()
 
@@ -18,3 +19,9 @@ def splice(texture, splice_json):
              width,
              height))
     return slices
+
+def asset(texture_path):
+    return rf"texturepacks\{settings.get("texturepack")}\assets\{texture_path}"
+
+def data(data_path):
+    return rf"texturepacks\{settings.get("texturepack")}\data\{data_path}"

@@ -34,7 +34,7 @@ class MainMenu():
             "exit_button",
             (300, 300),
             (200, 30),
-            texture=r"texturepacks\default\assets\button.png",
+            texture=tx.asset("button.png"),
             texture_splices=[
                 r"texturepacks\default\data\button_normal.json",
                 r"texturepacks\default\data\button_hover.json"
@@ -130,10 +130,21 @@ class SettingsMenu():
             options=["Option 1", "Option 2", "Option 3"],
             default=0
         ), "dropdown")
+        self.menu.add_object(menu.Textbox(
+            "test_textbox",
+            (800, 200),
+            (200, 50),
+            texture=r"texturepacks\default\assets\textbox.png",
+            texture_splices=[
+                r"texturepacks\default\data\keybind_normal.json",
+                r"texturepacks\default\data\keybind_hover.json"
+            ],
+            text_size=20, font_color=(255,255,255), font='Arial'
+        ), "textbox")
     def draw(self):
         self.menu.draw()
         font = pygame.font.SysFont('Arial', 20)
-        text = font.render(str(self.menu.objects['keybind'][0].get_value()), True, (255,255,255))
+        text = font.render(str(''), True, (255,255,255))
         screen.blit(text)
     def events(self, event):
         update(self, event)

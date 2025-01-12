@@ -272,8 +272,52 @@ class Dropdown(Object):
         if event.type == pygame.MOUSEBUTTONDOWN and self.is_hover():
             self.clicked = True
         
-        
+class Textbox(Object):
+    def __init__(self, id, pos, size, default='', texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), font='Arial'):
+        self.clicked = False
+        self.id = id
+        self.x = pos[0]
+        self.y = pos[1]
+        self.width = size[0]
+        self.height = size[1]
+        self.text = default
+        self.texture = pygame.image.load(texture).convert()
+        self.texture_splices = [
+            tx.splice(self.texture, texture_splices[0]),
+            tx.splice(self.texture, texture_splices[1])
+        ]
+        self.font = pygame.font.SysFont(font, text_size)
+        self.font_color = font_color
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
 
+    def draw(self, screen):
+        if not self.clicked:
+            splices = self.texture_splices[0]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        else:
+            splices = self.texture_splices[1]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        text = self.font.render(str(self.text), True, self.font_color)
+        text_rect = text.get_rect(center=self.rect.center)
+        screen.blit(text, text_rect)
+    
+    def update(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.is_hover():
+            self.clicked = True
+            return
+        if event.type == pygame.KEYDOWN and self.clicked:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+                self.backspace = True
+            elif event.key == pygame.K_RETURN:
+                self.clicked = False
+            else:
+                self.text += event.unicode
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            self.clicked = False
+    
+    def get_value(self):
+        return self.text
         
 
 

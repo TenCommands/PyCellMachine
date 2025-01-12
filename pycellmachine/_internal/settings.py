@@ -1,5 +1,5 @@
 import json
 
-def get():
+def get(path):
     with open("settings.json") as f:
-        return json.load(f)
+        return json.load(f)[path]
