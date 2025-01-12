@@ -95,8 +95,46 @@ class SettingsMenu():
             values=range(5),
             default=3,
         ), "slider")
+        self.menu.add_object(menu.Box(
+            "test_box",
+            (300, 500),
+            (50, 50),
+            texture=r"texturepacks\default\assets\box.png",
+            texture_splices=[
+                r"texturepacks\default\data\box_on.json",
+                r"texturepacks\default\data\box_off.json"
+            ],
+            default=False
+        ), "box")
+        self.menu.add_object(menu.Keybind(
+            "test_keybind",
+            (300, 400),
+            (200, 50),
+            texture=r"texturepacks\default\assets\keybind.png",
+            texture_splices=[
+                r"texturepacks\default\data\keybind_normal.json",
+                r"texturepacks\default\data\keybind_hover.json"
+            ],
+            text_size=20, font_color=(255,255,255), font='Arial'
+        ), "keybind")
+        self.menu.add_object(menu.Dropdown(
+            "test_dropdown",
+            (500, 100),
+            (200, 50),
+            texture=r"texturepacks\default\assets\dropdown.png",
+            texture_splices=[
+                r"texturepacks\default\data\keybind_normal.json",
+                r"texturepacks\default\data\keybind_hover.json"
+            ],
+            text_size=20, font_color=(255,255,255), font='Arial',
+            options=["Option 1", "Option 2", "Option 3"],
+            default=0
+        ), "dropdown")
     def draw(self):
         self.menu.draw()
+        font = pygame.font.SysFont('Arial', 20)
+        text = font.render(str(self.menu.objects['keybind'][0].get_value()), True, (255,255,255))
+        screen.blit(text)
     def events(self, event):
         update(self, event)
         for button in self.menu.objects['button']:

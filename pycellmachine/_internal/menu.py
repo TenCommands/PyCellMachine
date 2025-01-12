@@ -51,7 +51,7 @@ class Object:
 
 
 class Button(Object):
-    def __init__(self, id, pos, size, texture=None, texture_splices=None, color=[(100,100,100),(50,50,50)], text_size=20, font_color=(255,255,255), text='', font='Arial'):
+    def __init__(self, id, pos, size, texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), text='', font='Arial'):
         pygame.font.init()
         self.id = id
         self.text = text
@@ -62,31 +62,19 @@ class Button(Object):
         self.font = pygame.font.SysFont(font, text_size)
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
-        if texture == None:
-            self.color = color[0]
-            self.hover_color = color[1]
-            self.texture = None
-            self.texture_splices = None
-        else:
-            self.texture = pygame.image.load(texture).convert()
-            self.texture_splices = [
-                tx.splice(self.texture, texture_splices[0]),
-                tx.splice(self.texture, texture_splices[1])
-            ]
+        self.texture = pygame.image.load(texture).convert()
+        self.texture_splices = [
+            tx.splice(self.texture, texture_splices[0]),
+            tx.splice(self.texture, texture_splices[1])
+        ]
     
     def draw(self, screen):
-        if self.texture == None:
-            if self.is_hover():
-                pygame.draw.rect(screen, self.hover_color, self.rect)
-            else:
-                pygame.draw.rect(screen, self.color, self.rect)
+        if self.is_hover():
+            splices = self.texture_splices[1]
         else:
-            if self.rect.collidepoint(pygame.mouse.get_pos()):
-                splices = self.texture_splices[1]
-            else:
-                splices = self.texture_splices[0]
-            
-            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+            splices = self.texture_splices[0]
+        
+        self.draw_splices(splices, screen, self.rect, self.width, self.height)
 
         text = self.font.render(self.text, True, self.font_color)
         text_rect = text.get_rect(center=self.rect.center)
@@ -96,28 +84,21 @@ class Button(Object):
         pass
 
 class Slider(Object):
-    def __init__(self, id, pos, size, values, default=0, color=[(100,100,100),(50,50,50),(255,255,255)], texture=None, texture_splices=None):
+    def __init__(self, id, pos, size, values, default=0, texture=None, texture_splices=None):
         self.clicked = False
         self.id = id
         self.x = pos[0]
         self.y = pos[1]
-        self.values = values,
+        self.values = values
         self.value = default
         self.width = size[0]
         self.height = size[1]
-        if texture == None:
-            self.color = color[0]
-            self.hover_color = color[1]
-            self.chip_color = color[2]
-            self.texture = None
-            self.texture_splices = None
-        else:
-            self.texture = pygame.image.load(texture).convert()
-            self.texture_splices = [
-                tx.splice(self.texture, texture_splices[0]),
-                tx.splice(self.texture, texture_splices[1]),
-                tx.splice(self.texture, texture_splices[2])
-            ]
+        self.texture = pygame.image.load(texture).convert()
+        self.texture_splices = [
+            tx.splice(self.texture, texture_splices[0]),
+            tx.splice(self.texture, texture_splices[1]),
+            tx.splice(self.texture, texture_splices[2])
+        ]
 
         self.chips = []
         for i in range(len(values)):
@@ -138,24 +119,14 @@ class Slider(Object):
                             self.height + 6)
 
     def draw(self, screen):
-        if self.texture == None:
-            if self.is_hover():
-                pygame.draw.rect(screen, self.hover_color, self.rect)
-            else:
-                pygame.draw.rect(screen, self.color, self.rect)
-            # draw bars in self.bars
-            for i in range(len(self.chips)):
-                pygame.draw.rect(screen, self.chip_color, self.chips[i])
-            pygame.draw.rect(screen, self.chip_color, self.value_rect)
-        else:
-            splices = self.texture_splices[0]
-            self.draw_splices(splices, screen, self.rect, self.width, self.height)
-            splices = self.texture_splices[1]
-            # draw bars in self.bars
-            for i in range(len(self.chips)):
-                self.draw_splices(splices, screen, self.chips[i], self.chips[i].width, self.chips[i].height)
-            splices = self.texture_splices[2]
-            self.draw_splices(splices, screen, self.value_rect, self.value_rect.width, self.value_rect.height)
+        splices = self.texture_splices[0]
+        self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        splices = self.texture_splices[1]
+        # draw bars in self.bars
+        for i in range(len(self.chips)):
+            self.draw_splices(splices, screen, self.chips[i], self.chips[i].width, self.chips[i].height)
+        splices = self.texture_splices[2]
+        self.draw_splices(splices, screen, self.value_rect, self.value_rect.width, self.value_rect.height)
 
     def update(self, event):
         if (event.type == pygame.MOUSEBUTTONDOWN and self.is_hover()) or (event.type == pygame.MOUSEMOTION and self.clicked):
@@ -166,7 +137,7 @@ class Slider(Object):
 
             for i in range(len(sorted_chips)):
                 if self.chips[i] == sorted_chips[0]:
-                    values = self.values[0]
+                    values = self.values
                     self.value = i
                     self.value_rect = pygame.Rect(self.x + (self.width/len(values))*self.value - self.width/2 + (self.width/len(values))/2 - 7.5,
                         self.y - self.height/2 - 4,
@@ -178,6 +149,133 @@ class Slider(Object):
     
     def get_value(self):
         return self.values[self.value]
+
+class Box(Object):
+    def __init__(self, id, pos, size, default = False, texture=None, texture_splices=None):
+        self.id = id
+        self.x = pos[0]
+        self.y = pos[1]
+        self.width = size[0]
+        self.height = size[1]
+        self.value = default
+        self.texture = pygame.image.load(texture).convert()
+        self.texture_splices = [
+            tx.splice(self.texture, texture_splices[0]),
+            tx.splice(self.texture, texture_splices[1])
+        ]
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+    
+    def draw(self, screen):
+        if self.value:
+            splices = self.texture_splices[0]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        else:
+            splices = self.texture_splices[1]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+    
+    def update(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.is_hover():
+            self.value = not self.value
+    
+    def get_value(self):
+        return self.value
+
+class Keybind(Object):
+    def __init__(self, id, pos, size, default=None, texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), font='Arial'):
+        self.clicked = False
+        self.id = id
+        self.x = pos[0]
+        self.y = pos[1]
+        self.width = size[0]
+        self.height = size[1]
+        self.value = default
+        self.texture = pygame.image.load(texture).convert()
+        self.texture_splices = [
+            tx.splice(self.texture, texture_splices[0]),
+            tx.splice(self.texture, texture_splices[1])
+        ]
+        self.font = pygame.font.SysFont(font, text_size)
+        self.font_color = font_color
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+    
+    def draw(self, screen):
+        if not self.is_hover() and not self.clicked:
+            splices = self.texture_splices[0]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        else:
+            splices = self.texture_splices[1]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        text = self.font.render(str(self.value), True, self.font_color)
+        text_rect = text.get_rect(center=self.rect.center)
+        screen.blit(text, text_rect)
+    
+    def update(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.is_hover():
+            self.clicked = True
+        if event.type == pygame.KEYDOWN and self.clicked:
+            self.value = pygame.key.name(event.key).capitalize()
+            self.clicked = False
+    
+    def get_value(self):
+        return self.value
+
+class Dropdown(Object):
+    def __init__(self, id, pos, size, options=[None, None], default=None, texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), font='Arial'):
+        self.clicked = False
+        self.hovering = -1
+        self.id = id
+        self.x = pos[0]
+        self.y = pos[1]
+        self.width = size[0]
+        self.height = size[1]
+        self.value = default
+        self.values = options
+        self.texture = pygame.image.load(texture).convert()
+        self.texture_splices = [
+            tx.splice(self.texture, texture_splices[0]),
+            tx.splice(self.texture, texture_splices[1])
+        ]
+        self.font = pygame.font.SysFont(font, text_size)
+        self.font_color = font_color
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+    
+    def draw(self, screen):
+        if not self.clicked:
+            splices = self.texture_splices[0]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        else:
+            splices = self.texture_splices[1]
+            self.draw_splices(splices, screen, self.rect, self.width, self.height)
+            # render all possible values
+            splices = self.texture_splices[0]
+            
+            for i, value in enumerate(self.values):
+                text = self.font.render(str(value), True, self.font_color)
+                text_rect = text.get_rect(center=(self.rect.center[0], self.rect.center[1] + (i * self.height + self.height)))
+                box_rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2 + (i * self.height + self.height),self.width, self.height)
+                self.draw_splices(splices, screen, box_rect, self.width, self.height)
+                screen.blit(text, text_rect)
+                if box_rect.collidepoint(pygame.mouse.get_pos()):
+                    self.hovering = i
+        
+        text = self.font.render(str(self.values[self.value]), True, self.font_color)
+        text_rect = text.get_rect(center=self.rect.center)
+        screen.blit(text, text_rect)
+    
+    def update(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.clicked:
+            self.clicked = False
+            if self.hovering != -1:
+                self.value = self.hovering
+                self.hovering = -1
+            return
+        if event.type == pygame.MOUSEBUTTONDOWN and self.is_hover():
+            self.clicked = True
+        
+        
+
+        
+
 
 class Screen:
     def __init__(self, screen):

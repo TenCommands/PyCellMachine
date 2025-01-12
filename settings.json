@@ -2,5 +2,74 @@
     "texturepack": "default",
     "mods": [
         "conway"
-    ]
+    ],
+    "options": {
+        "audio": {
+            "volume.music": 1.0,
+            "volume.sfx": 1.0
+        },
+        "graphics": {
+            "anti_aliasing": "FXAA",
+            "bloom": false,
+            "fullscreen": false,
+            "fade_static_cells": false,
+            "fade_strength": 0.5
+        },
+        "other": {
+            "export_format": "v3"
+        },
+        "controls": {
+            "movement_speed": 1.0,
+            "zoom_sensitivity": 1.0
+        },
+        "keybinds": {
+            "hide_hud": ["f1"],
+            "debug_ui": ["f3"],
+            "save_level": ["f2"],
+            "highlight_movable_cells": ["space"],
+            "place_cell": ["mouse0"],
+            "delete_cell": ["mouse1"],
+            "pick_cell": ["left_control", "mouse2"],
+            "drag_cell": ["mouse0"],
+            "undo": ["left_control","z"],
+            "redo": ["left_control","z"],
+            "up": ["w"],
+            "left": ["a"],
+            "down": ["s"],
+            "right": ["d"],
+            "move_camera_fast": ["left_control"],
+            "pan_camera": ["mouse2"],
+            "play_pause": ["f5"],
+            "reset_simulation": ["f6"],
+            "step_simulation": ["f7"],
+            "slot.0": ["1"],
+            "slot.1": ["2"],
+            "slot.2": ["3"],
+            "slot.3": ["4"],
+            "slot.4": ["5"],
+            "slot.5": ["6"],
+            "slot.6": ["7"],
+            "slot.7": ["8"],
+            "slot.8": ["9"],
+            "slot.9": ["0"],
+            "rotate_clockwise": ["e"],
+            "rotate_counterclockwise": ["q"],
+            "rotate_180": ["r"],
+            "selection.begin": ["mouse0", "left_control"],
+            "selection.select": ["mouse0"],
+            "selection.cancel": ["mouse1"],
+            "selection.copy": ["c"],
+            "selection.paste": ["v"],
+            "selection.cut": ["x"],
+            "selection.delete": ["delete"],
+            "selection.all": ["a", "left_control"],
+            "selection.save": ["f2", "left_control"],
+            "selection.crop": ["b"],
+            "selection.stack": ["left_control"],
+            "selection.move.up": ["up_arrow"],
+            "selection.move.left": ["left_arrow"],
+            "selection.move.down": ["down_arrow"],
+            "selection.move.right": ["right_arrow"]
+        }
+    }
 }
