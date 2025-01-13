@@ -1,5 +1,6 @@
 ![](/git_assets/project_logo.png)
 ---
+**Note**: The current state of the project is basically just a Menu test with example ui objects like dropdowns, buttons, sliders, etc. There is no functional game yet.
 ## License
 
 PyCellMachine is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3 (AGPL-3.0). This means:
