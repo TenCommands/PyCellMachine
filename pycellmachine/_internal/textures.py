@@ -21,7 +21,7 @@ def splice(texture, splice_json):
     return slices
 
 def asset(texture_path):
-    return rf"texturepacks\{settings.get("texturepack")}\assets\{texture_path}"
+    return rf"pycellmachine/texturepacks/{settings.get('texturepack')}/assets/{texture_path}"
 
 def data(data_path):
-    return rf"texturepacks\{settings.get("texturepack")}\data\{data_path}"
+    return rf"pycellmachine/texturepacks/{settings.get('texturepack')}/data/{data_path}"

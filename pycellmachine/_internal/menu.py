@@ -14,11 +14,22 @@ class Object:
         return self.rect.collidepoint(pygame.mouse.get_pos())
     
     def move(self, pos):
-        # Move the button to a new position
+        # Move the object to a new position
         self.x = pos[0]
         self.y = pos[1]
         # remake rect object with the new position at the center
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+
+        # Move any additional rects if they exist
+        if hasattr(self, 'chips'):
+            for i, chip in enumerate(self.chips):
+                chip.x = self.x + (self.width/len(self.values))*i - self.width/2 + (self.width/len(self.values))/2 - 7.5
+                chip.y = self.y - self.height/2
+
+        if hasattr(self, 'value_rect'):
+            self.value_rect.x = self.x + (self.width/len(self.values))*self.value - self.width/2 + (self.width/len(self.values))/2 - 7.5
+            self.value_rect.y = self.y - self.height/2 - 4
+
 
     def size(self, size):
         self.width = size[0]
@@ -26,15 +37,19 @@ class Object:
         self.move((self.x, self.y))
     
     def draw_splices(self, splices, screen, rect, width, height):
+        width = max(width, 1)
+        height = max(height, splices['(0, 0)'].get_height() + splices['(0, 2)'].get_height() + 1)
+
         # Left side
         screen.blit(splices['(0, 0)'], (rect.x, rect.y))
         screen.blit(pygame.transform.scale(splices['(0, 1)'], (splices['(0, 1)'].get_width(), height - splices['(0, 0)'].get_height() - splices['(0, 2)'].get_height())), (rect.x, rect.y + splices['(0, 0)'].get_height()))
         screen.blit(splices['(0, 2)'], (rect.x, rect.y + height - splices['(0, 2)'].get_height()))
 
-        # Middle (stretched both horizontally and vertically)
-        middle_width = width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width() + 1
-        middle_height = height - splices['(1, 0)'].get_height() - splices['(1, 2)'].get_height() + 1
+        # Calculate dimensions
+        middle_width = max(0, width - splices['(0, 0)'].get_width() - splices['(2, 0)'].get_width()) + 1
+        middle_height = max(0, height - splices['(0, 0)'].get_height() - splices['(0, 2)'].get_height()) + 1
 
+        # Now the scaling won't use negative values
         middle_top = pygame.transform.scale(splices['(1, 0)'], (middle_width, splices['(1, 0)'].get_height()))
         middle_center = pygame.transform.scale(splices['(1, 1)'], (middle_width, middle_height))
         middle_bottom = pygame.transform.scale(splices['(1, 2)'], (middle_width, splices['(1, 2)'].get_height()))
@@ -51,7 +66,7 @@ class Object:
 
 
 class Button(Object):
-    def __init__(self, id, pos, size, texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), text='', font='Arial'):
+    def __init__(self, id, pos, size, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), text='', font='Arial'):
         pygame.font.init()
         self.id = id
         self.text = text
@@ -59,10 +74,10 @@ class Button(Object):
         self.y = pos[1]
         self.width = size[0]
         self.height = size[1]
-        self.font = pygame.font.SysFont(font, text_size)
+        self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
-        self.texture = pygame.image.load(texture).convert()
+        self.texture = pygame.image.load(texture).convert_alpha()
         self.texture_splices = [
             tx.splice(self.texture, texture_splices[0]),
             tx.splice(self.texture, texture_splices[1])
@@ -93,7 +108,7 @@ class Slider(Object):
         self.value = default
         self.width = size[0]
         self.height = size[1]
-        self.texture = pygame.image.load(texture).convert()
+        self.texture = pygame.image.load(texture).convert_alpha()
         self.texture_splices = [
             tx.splice(self.texture, texture_splices[0]),
             tx.splice(self.texture, texture_splices[1]),
@@ -150,6 +165,61 @@ class Slider(Object):
     def get_value(self):
         return self.values[self.value]
 
+class Scrollbar(Object):
+    def __init__(self, id, pos, size, default=1.0, texture=None, texture_splices=None):
+        self.relative_y = 0
+        self.previous_y = 0
+        self.clicked = False
+        self.id = id
+        self.x = pos[0]
+        self.y = pos[1]
+        self.value = default
+        self.width = size[0]
+        self.height = size[1]
+        self.texture = pygame.image.load(texture).convert_alpha()
+        self.texture_splices = [
+            tx.splice(self.texture, texture_splices[0]),
+            tx.splice(self.texture, texture_splices[1])
+        ]
+
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+        self.value_rect = pygame.Rect(self.x - self.width/2 - 4, 
+                                    self.y + self.height/2 -+ (self.height * self.value),
+                                    self.width + 8, 
+                                    15)
+
+    def draw(self, screen):
+        splices = self.texture_splices[0]
+        self.draw_splices(splices, screen, self.rect, self.width, self.height)
+        splices = self.texture_splices[1]
+        self.draw_splices(splices, screen, self.value_rect, self.value_rect.width, self.value_rect.height)
+
+    def update(self, event):
+        if (event.type == pygame.MOUSEBUTTONDOWN and self.is_hover()) or (event.type == pygame.MOUSEMOTION and self.clicked):
+            self.clicked = True
+            mouse_y = pygame.mouse.get_pos()[1]
+            self.relative_y = mouse_y - (self.y - self.height/2)
+            #if relative_y < 0:
+            #    self.direction = -1
+            self.value = 1 - (self.relative_y / self.height)
+            self.value = max(0, min(1, self.value))
+            
+            self.value_rect.y = self.y + self.height/2 - (self.height * self.value) - self.value_rect.height/2
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.clicked = False
+    
+    def get_value(self):
+        return self.value
+
+    def scroll(self, menu, scale=1, exclude = []):
+        if self.clicked:
+            scroll_value = self.get_value()
+            if 0 < scroll_value < 1:
+                move_y = self.relative_y - self.previous_y if hasattr(self, 'previous_y') else 0
+                menu.move(0, move_y * scale, exclude=exclude)
+                self.previous_y = self.relative_y
+
 class Box(Object):
     def __init__(self, id, pos, size, default = False, texture=None, texture_splices=None):
         self.id = id
@@ -158,7 +228,7 @@ class Box(Object):
         self.width = size[0]
         self.height = size[1]
         self.value = default
-        self.texture = pygame.image.load(texture).convert()
+        self.texture = pygame.image.load(texture).convert_alpha()
         self.texture_splices = [
             tx.splice(self.texture, texture_splices[0]),
             tx.splice(self.texture, texture_splices[1])
@@ -181,7 +251,7 @@ class Box(Object):
         return self.value
 
 class Keybind(Object):
-    def __init__(self, id, pos, size, default=None, texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, default=None, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
         self.clicked = False
         self.id = id
         self.x = pos[0]
@@ -189,12 +259,12 @@ class Keybind(Object):
         self.width = size[0]
         self.height = size[1]
         self.value = default
-        self.texture = pygame.image.load(texture).convert()
+        self.texture = pygame.image.load(texture).convert_alpha()
         self.texture_splices = [
             tx.splice(self.texture, texture_splices[0]),
             tx.splice(self.texture, texture_splices[1])
         ]
-        self.font = pygame.font.SysFont(font, text_size)
+        self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
     
@@ -220,7 +290,7 @@ class Keybind(Object):
         return self.value
 
 class Dropdown(Object):
-    def __init__(self, id, pos, size, options=[None, None], default=None, texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, options=[None, None], default=None, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
         self.clicked = False
         self.hovering = -1
         self.id = id
@@ -230,12 +300,12 @@ class Dropdown(Object):
         self.height = size[1]
         self.value = default
         self.values = options
-        self.texture = pygame.image.load(texture).convert()
+        self.texture = pygame.image.load(texture).convert_alpha()
         self.texture_splices = [
             tx.splice(self.texture, texture_splices[0]),
             tx.splice(self.texture, texture_splices[1])
         ]
-        self.font = pygame.font.SysFont(font, text_size)
+        self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
     
@@ -275,7 +345,7 @@ class Dropdown(Object):
             self.clicked = True
         
 class Textbox(Object):
-    def __init__(self, id, pos, size, default='', texture=None, texture_splices=None, text_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, default='', texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
         self.clicked = False
         self.id = id
         self.x = pos[0]
@@ -283,12 +353,12 @@ class Textbox(Object):
         self.width = size[0]
         self.height = size[1]
         self.text = default
-        self.texture = pygame.image.load(texture).convert()
+        self.texture = pygame.image.load(texture).convert_alpha()
         self.texture_splices = [
             tx.splice(self.texture, texture_splices[0]),
             tx.splice(self.texture, texture_splices[1])
         ]
-        self.font = pygame.font.SysFont(font, text_size)
+        self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
 
@@ -321,7 +391,25 @@ class Textbox(Object):
     def get_value(self):
         return self.text
         
-
+class Text(Object):
+    def __init__(self, id, pos, size, text='', font_size=20, font_color=(255,255,255), font='Arial'):
+        self.id = id
+        self.x = pos[0]
+        self.y = pos[1]
+        self.width = size[0]
+        self.height = size[1]
+        self.text = text
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+    
+    def draw(self, screen):
+        text = self.font.render(str(self.text), True, self.font_color)
+        text_rect = text.get_rect(center=self.rect.center)
+        screen.blit(text, text_rect)
+    
+    def update(self, event):
+        pass
 
 class Screen:
     def __init__(self, screen):
@@ -344,3 +432,11 @@ class Screen:
         for type in self.objects:
             for object in self.objects[type]:
                 object.update(event)
+    
+    def move(self, offset_x, offset_y, exclude: Object=[]):
+        for type in self.objects:
+            for object in self.objects[type]:
+                if object.id not in exclude:
+                    new_x = object.x + offset_x
+                    new_y = object.y + offset_y
+                    object.move((new_x, new_y))
