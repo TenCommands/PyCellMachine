@@ -1,8 +1,11 @@
 import pygame
-import sys, json
+import sys, os, json
 from ._internal import menu
 from ._internal import textures as tx
 from ._internal import settings
+
+global game_menu
+game_menu = None
 
 screen = pygame.display.set_mode(menu.display_size(), pygame.RESIZABLE)
 
@@ -30,9 +33,27 @@ def update(self, event):
 class MainMenu():
     def __init__(self):
         self.menu = menu.Screen(screen)
-        # Leave Game Button #
+
+        self.menu.add_object(menu.Image(
+            "title",
+            (screen_size()[0] // 2, 100),
+            (1578, 160),
+            texture="pycellmachine/_internal/assets/title.png"
+        ), "image")
+
         self.menu.add_object(menu.Button(
-            "exit_button",
+            "play_button",
+            (300, 250),
+            (200, 30),
+            texture=tx.asset("button.png"),
+            texture_splices=[
+                tx.data("button_normal.json"),
+                tx.data("button_hover.json")
+            ],
+            font_size=20, font_color=(255,255,255), text='Play', font='Monocraft'
+        ), "button")
+        self.menu.add_object(menu.Button(
+            "settings_button",
             (300, 300),
             (200, 30),
             texture=tx.asset("button.png"),
@@ -40,21 +61,54 @@ class MainMenu():
                 tx.data("button_normal.json"),
                 tx.data("button_hover.json")
             ],
-            font_size=20, font_color=(255,255,255), text='Leave Game', font='Arial'
+            font_size=20, font_color=(255,255,255), text='Settings', font='Monocraft'
         ), "button")
-
-        # Settings Button #
         self.menu.add_object(menu.Button(
-            "settings_button",
+            "texturepacks_button",
             (300, 350),
-            (200, 60),
+            (200, 30),
             texture=tx.asset("button.png"),
             texture_splices=[
                 tx.data("button_normal.json"),
                 tx.data("button_hover.json")
             ],
-            font_size=20, font_color=(255,255,255), text='Settings', font='Arial'
+            font_size=20, font_color=(255,255,255), text='Texture Packs', font='Monocraft'
         ), "button")
+        self.menu.add_object(menu.Button(
+            "mods_button",
+            (300, 400),
+            (200, 30),
+            texture=tx.asset("button.png"),
+            texture_splices=[
+                tx.data("button_normal.json"),
+                tx.data("button_hover.json")
+            ],
+            font_size=20, font_color=(255,255,255), text='Mods', font='Monocraft'
+        ), "button")
+        self.menu.add_object(menu.Button(
+            "credits_button",
+            (300, 450),
+            (200, 30),
+            texture=tx.asset("button.png"),
+            texture_splices=[
+                tx.data("button_normal.json"),
+                tx.data("button_hover.json")
+            ],
+            font_size=20, font_color=(255,255,255), text='Credits', font='Monocraft'
+        ), "button")
+        self.menu.add_object(menu.Button(
+            "exit_button",
+            (300, 500),
+            (200, 30),
+            texture=tx.asset("button.png"),
+            texture_splices=[
+                tx.data("button_normal.json"),
+                tx.data("button_hover.json")
+            ],
+            font_size=20, font_color=(255,255,255), text='Leave Game', font='Monocraft'
+        ), "button")
+
+        
 
     def draw(self):
         self.menu.draw()
@@ -62,12 +116,14 @@ class MainMenu():
         update(self, event)
         for button in self.menu.objects['button']:
             if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
+                global game_menu
                 if button.id == "exit_button":
                     pygame.quit()
                     sys.exit()
                 if button.id == "settings_button":
-                    global game_menu
                     game_menu = SettingsMenu()
+                if button.id == "texturepacks_button":
+                    game_menu = TexturepacksMenu()
 
 class SettingsMenu():
     def __init__(self):
@@ -107,8 +163,8 @@ class SettingsMenu():
                         default=value,
                         texture=tx.asset("box.png"),
                         texture_splices=[
-                            tx.data("box_off.json"),
-                            tx.data("box_on.json")
+                            tx.data("box_on.json"),
+                            tx.data("box_off.json")
                         ]
                     ), "box")
                 if isinstance(value, float):
@@ -191,9 +247,6 @@ class SettingsMenu():
 
     def draw(self):
         self.menu.draw()
-        font = pygame.font.SysFont('Arial', 20)
-        text = font.render(str(''), True, (255,255,255))
-        screen.blit(text)
 
     def save_settings(self):
         _settings = settings.get()
@@ -231,8 +284,106 @@ class SettingsMenu():
                     global game_menu
                     game_menu = MainMenu()
 
+class TexturepacksMenu():
+    def __init__(self):
+        self.menu = menu.Screen(screen)
 
-game_menu = SettingsMenu()
+        self.menu.add_object(menu.Text(
+            "texturepacks_title",
+            (screen_size()[0]//2, 50),
+            (200, 30),
+            text="Texturepacks",
+            font_color=(255,255,255),
+            font_size=80,
+            font='Monocraft'
+        ), "text")
+
+        self.menu.add_object(menu.Button(
+            "back_button",
+            (150, 50),
+            (200, 50),
+            texture=tx.asset("button.png"),
+            texture_splices=[
+                tx.data("button_normal.json"),
+                tx.data("button_hover.json")
+            ],
+            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+        ), "button")
+
+        # for texturepack in os.listdir(rf"pycellmachine/texturepacks"):
+        y = 50
+        for texturepack in os.listdir(rf"pycellmachine/texturepacks"):
+            y += 110
+            self.menu.add_object(menu.Box(
+                "text_" + texturepack,
+                (screen_size()[0]//2, y),
+                (750, 100),
+                texture=tx.asset("box.png"),
+                texture_splices=[
+                    tx.data("box_off.json"),
+                    tx.data("box_off.json")
+                ]
+            ), "box")
+            self.menu.add_object(menu.Image(
+                "image_" + texturepack,
+                (screen_size()[0]//2 - 330, y - 5),
+                (80, 80),
+                texture=tx.texturepack(pack=texturepack, path='/pack.png')
+            ), "image")
+            self.menu.add_object(menu.Text(
+                "name_" + texturepack,
+                (screen_size()[0]//2, y - 26),
+                (550, 100),
+                text=tx.load_data(tx.texturepack(pack=texturepack, path='/pack.json'))['name'],
+                font_color=(255,255,255),
+                font_size=24,
+                font='Monocraft',
+                align='left'
+            ), "text")
+            self.menu.add_object(menu.Text(
+                "author_" + texturepack,
+                (screen_size()[0]//2, y - 30),
+                (720, 100),
+                text=tx.load_data(tx.texturepack(pack=texturepack, path='/pack.json'))['author'],
+                font_color=(255,255,255),
+                font_size=16,
+                font='Monocraft',
+                align='right'
+            ), "text")
+            self.menu.add_object(menu.Text(
+                "description_" + texturepack,
+                (screen_size()[0]//2, y),
+                (550, 100),
+                text=tx.load_data(tx.texturepack(pack=texturepack, path='/pack.json'))['description'],
+                font_color=(255,255,255),
+                font_size=16,
+                font='Monocraft',
+                align='left'
+            ), "text")
+    
+    def draw(self):
+        self.menu.draw()
+        for text in self.menu.objects['text']:
+            text.draw(screen)
+    
+    def events(self, event):
+        update(self, event)
+        for button in self.menu.objects['button']:
+            if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
+                if button.id == "back_button":
+                    global game_menu
+                    game_menu = MainMenu()
+        for box in self.menu.objects['box']:
+            if box.id.startswith('text_'):
+                box.value = False
+                if box.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
+                    _settings = settings.get()
+                    _settings['texturepack'] = box.id.split('_')[1]
+                    settings.save(_settings)
+
+
+
+game_menu = TexturepacksMenu()
 
 def main():
     while True:

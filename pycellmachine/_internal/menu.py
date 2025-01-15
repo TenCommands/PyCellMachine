@@ -208,9 +208,6 @@ class Scrollbar(Object):
 
         if event.type == pygame.MOUSEBUTTONUP:
             self.clicked = False
-    
-    def get_value(self):
-        return self.value
 
     def scroll(self, menu, scale=1, exclude = []):
         if self.clicked:
@@ -219,9 +216,13 @@ class Scrollbar(Object):
                 move_y = self.relative_y - self.previous_y if hasattr(self, 'previous_y') else 0
                 menu.move(0, move_y * scale, exclude=exclude)
                 self.previous_y = self.relative_y
+    
+    def get_value(self):
+        return self.value
 
 class Box(Object):
     def __init__(self, id, pos, size, default = False, texture=None, texture_splices=None):
+        self.clicked = False
         self.id = id
         self.x = pos[0]
         self.y = pos[1]
@@ -244,11 +245,10 @@ class Box(Object):
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
     
     def update(self, event):
+        self.clicked = False
         if event.type == pygame.MOUSEBUTTONDOWN and self.is_hover():
             self.value = not self.value
-    
-    def get_value(self):
-        return self.value
+            self.clicked = True
 
 class Keybind(Object):
     def __init__(self, id, pos, size, default=None, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
@@ -285,9 +285,6 @@ class Keybind(Object):
         if event.type == pygame.KEYDOWN and self.clicked:
             self.value = pygame.key.name(event.key).capitalize()
             self.clicked = False
-    
-    def get_value(self):
-        return self.value
 
 class Dropdown(Object):
     def __init__(self, id, pos, size, options=[None, None], default=None, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
@@ -390,12 +387,9 @@ class Textbox(Object):
                 self.text += event.unicode
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.clicked = False
-    
-    def get_value(self):
-        return self.text
         
 class Text(Object):
-    def __init__(self, id, pos, size, text='', font_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, text='', font_size=20, font_color=(255,255,255), font='Arial', align='center'):
         self.id = id
         self.x = pos[0]
         self.y = pos[1]
@@ -405,11 +399,36 @@ class Text(Object):
         self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
-    
+        self.align = align
+
     def draw(self, screen):
         text = self.font.render(str(self.text), True, self.font_color)
-        text_rect = text.get_rect(center=self.rect.center)
+        if self.align == 'left':
+            text_rect = text.get_rect(midleft=self.rect.midleft)
+        elif self.align == 'right':
+            text_rect = text.get_rect(midright=self.rect.midright)
+        else:  # center alignment
+            text_rect = text.get_rect(center=self.rect.center)
         screen.blit(text, text_rect)
+
+    
+    def update(self, event):
+        pass
+
+class Image(Object):
+    def __init__(self, id, pos, size, texture):
+        self.id = id,
+        self.x = pos[0]
+        self.y = pos[1]
+        self.width = size[0]
+        self.height = size[1]
+        self.image = pygame.image.load(texture).convert_alpha()
+        self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
+
+    def draw(self, screen):
+        scaled_image = pygame.transform.scale(self.image, (self.width, self.height))
+        screen.blit(scaled_image, self.rect)
+        
     
     def update(self, event):
         pass

@@ -25,3 +25,13 @@ def asset(texture_path):
 
 def data(data_path):
     return rf"pycellmachine/texturepacks/{settings.get('texturepack')}/data/{data_path}"
+
+def texturepack(pack=settings.get('texturepack'), path="/"):
+    return rf"pycellmachine/texturepacks/{pack}{path}"
+
+def load_texture(path):
+    return pygame.image.load(asset(path)).convert_alpha()
+
+def load_data(path):
+    with open(path, 'r') as f:
+        return json.load(f)
