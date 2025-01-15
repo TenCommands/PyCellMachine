@@ -330,7 +330,10 @@ class Dropdown(Object):
                 if box_rect.collidepoint(pygame.mouse.get_pos()):
                     self.hovering = i
         
-        text = self.font.render(str(self.values[self.value]), True, self.font_color)
+        if self.values:  # check if values attribute is not empty
+            text = self.font.render(str(self.values[self.value]), True, self.font_color)
+        else:
+            text = self.font.render("", True, self.font_color)
         text_rect = text.get_rect(center=self.rect.center)
         screen.blit(text, text_rect)
     

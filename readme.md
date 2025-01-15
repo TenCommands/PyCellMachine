@@ -1,5 +1,12 @@
 ![](/git_assets/project_logo.png)
 ---
+[![GNU License](https://img.shields.io/badge/License-GNU-blue.svg)](https://choosealicense.com/licenses/agpl-3.0/)
+![GitHub commit activity](https://img.shields.io/github/last-commit/tencommands/PyCellMachine)
+
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/tencommands/PyCellMachine/total?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/tencommands/PyCellMachine)
+
+
 **Note**: The current state of the project is basically just a Menu test with example ui objects like dropdowns, buttons, sliders, etc. There is no functional game yet.
 ## License
 

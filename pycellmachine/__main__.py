@@ -2,6 +2,7 @@ import pygame
 import sys, json
 from ._internal import menu
 from ._internal import textures as tx
+from ._internal import settings
 
 screen = pygame.display.set_mode(menu.display_size(), pygame.RESIZABLE)
 
@@ -72,13 +73,11 @@ class SettingsMenu():
     def __init__(self):
         self.menu = menu.Screen(screen)
 
-        # Load settings from settings.json
-        with open('settings.json') as f:
-            settings = json.load(f)['options']
+        _settings = settings.get('options')
 
         # Create Text and Box objects for each setting
         y = 200
-        for key, value in settings.items():
+        for key, value in _settings.items():
             section = key
             self.menu.add_object(menu.Text(
                 key,
@@ -144,7 +143,7 @@ class SettingsMenu():
                         section + '.' + key,
                         (screen_size()[0]-260, y),
                         (300, 30),
-                        default=value[1:].index(value[0]),
+                        default=value[1:].index(value[0]) if value[0] in value[1:] else 0,
                         options=value[1:],
                         texture=tx.asset("dropdown.png"),
                         texture_splices=[
@@ -197,31 +196,27 @@ class SettingsMenu():
         screen.blit(text)
 
     def save_settings(self):
-        with open('settings.json', 'r') as f:
-            settings = json.load(f)
-            settings['options'] = {}
+        _settings = settings.get()
+        _settings['options'] = {}
         for key, value in self.menu.objects.items():
             if key == "button" or key == "text" or key == "scrollbar":
                 continue
             for obj in value:
                 section = obj.id.split('.')[0]
                 name = obj.id.split('.')[1]
-                if section not in settings['options']:
-                    settings['options'][section] = {}
+                if section not in _settings['options']:
+                    _settings['options'][section] = {}
                 if isinstance(obj, menu.Box):
-                    settings['options'][section][name] = obj.value
+                    _settings['options'][section][name] = obj.value
                 if isinstance(obj, menu.Keybind):
-                    settings['options'][section][name] = obj.value
+                    _settings['options'][section][name] = obj.value
                 if isinstance(obj, menu.Slider):
-                    settings['options'][section][name] = obj.value/100
+                    _settings['options'][section][name] = obj.value/100
                 if isinstance(obj, menu.Dropdown):
-                    # put obj.values[obj.value] at the begging of the obj.values list
-
-                    obj.values.insert(0, obj.values[obj.value])
-                    settings['options'][section][name] = obj.values
-        with open('settings.json', 'w') as f:
-            json.dump(settings, f, indent=4)
-
+                    if 0 <= obj.value < len(obj.values):
+                        obj.values.insert(0, obj.values[obj.value])
+                    _settings['options'][section][name] = obj.values
+        settings.save(_settings)
 
     def events(self, event):
         update(self, event)

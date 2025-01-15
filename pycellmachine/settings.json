@@ -26,12 +26,9 @@
         },
         "other": {
             "export_format": [
-                "V3 (LZ77)",
-                "V1 (Expanded)",
-                "V2 (Run Length)",
-                "V3 (LZ77)",
-                "Emoji (CMMM Discord)",
-                "Readable (Char Grid)"
+                "V3",
+                "V3",
+                "V4"
             ]
         },
         "keybinds": {
@@ -54,11 +51,34 @@
             "play_pause": "F5",
             "reset_simulation": "F6",
             "step_simulation": "F7",
-            "slot": "0",
+            "slot_0": "1",
+            "slot_1": "2",
+            "slot_2": "3",
+            "slot_3": "4",
+            "slot_4": "5",
+            "slot_5": "6",
+            "slot_6": "7",
+            "slot_7": "8",
+            "slot_8": "9",
+            "slot_9": "0",
             "rotate_clockwise": "E",
             "rotate_counterclockwise": "Q",
             "rotate_180": "R",
-            "selection": "Right Arrow"
+            "selection_begin": "Mouse0",
+            "selection_select": "Mouse0",
+            "selection_cancel": "Mouse1",
+            "selection_copy": "C",
+            "selection_paste": "V",
+            "selection_cut": "X",
+            "selection_delete": "Delete",
+            "selection_all": "A",
+            "selection_save": "F2",
+            "selection_crop": "B",
+            "selection_stack": "Left Control",
+            "selection_move_up": "Up Arrow",
+            "selection_move_left": "Left Arrow",
+            "selection_move_down": "Down Arrow",
+            "selection_move_right": "Right Arrow"
         }
     }
 }
