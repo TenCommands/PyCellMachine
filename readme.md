@@ -7,7 +7,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/tencommands/PyCellMachine)
 
 
-**Note**: The current state of the project is basically just a Menu test with example ui objects like dropdowns, buttons, sliders, etc. There is no functional game yet.
+**Note**: The current state of the project is just a main menu, a texture pack menu, and a settings menu. These menus are functional but there is still no gameplay yet.
 ## License
 
 PyCellMachine is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3 (AGPL-3.0). This means:
@@ -28,7 +28,7 @@ Cell Machine was originally created by Sam Hogan in 2019 as a simple cellular au
 
 - Cell Machine Mystic Mod (CMMM) - A popular mod adding new cells and features
 - Cell Machine Indev - A recreation with enhanced capabilities
-- Cell Machine Reimagined - Another take on the original with custom mechanics
+- CellLua - A Lua-based recreation with a ton of custom cells
 
 The core gameplay revolves around cells that can:
 - Move in different directions
