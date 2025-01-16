@@ -3,6 +3,11 @@ import sys, os, json
 from ._internal import menu
 from ._internal import textures as tx
 from ._internal import settings
+from ._internal import mods
+
+appicon = pygame.image.load(r'pycellmachine/_internal/assets/logo.png')
+pygame.display.set_caption('PyCellMachine')
+pygame.display.set_icon(appicon)
 
 global game_menu
 game_menu = None
@@ -124,6 +129,11 @@ class MainMenu():
                     game_menu = SettingsMenu()
                 if button.id == "texturepacks_button":
                     game_menu = TexturepacksMenu()
+                if button.id == "mods_button":
+                    game_menu = ModsMenu()
+                if button.id == "credits_button":
+                    game_menu = CreditsMenu()
+            
 
 class SettingsMenu():
     def __init__(self):
@@ -381,9 +391,157 @@ class TexturepacksMenu():
                     _settings['texturepack'] = box.id.split('_')[1]
                     settings.save(_settings)
 
+class ModsMenu():
+    def __init__(self):
+        self.menu = menu.Screen(screen)
 
+        self.menu.add_object(menu.Text(
+            "mods_title",
+            (screen_size()[0]//2, 50),
+            (200, 30),
+            text="Mods",
+            font_color=(255,255,255),
+            font_size=80,
+            font='Monocraft'
+        ), "text")
+        self.menu.add_object(menu.Button(
+            "back_button",
+            (150, 50),
+            (200, 50),
+            texture=tx.asset("button.png"),
+            texture_splices=[
+                tx.data("button_normal.json"),
+                tx.data("button_hover.json")
+            ],
+            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+        ), "button")
 
-game_menu = TexturepacksMenu()
+        mod_paths = [(mod, os.path.getctime(os.path.join("pycellmachine/mods", mod))) 
+            for mod in os.listdir("pycellmachine/mods")]
+        sorted_mods = [mod for mod, _ in sorted(mod_paths, key=lambda x: x[1], reverse=True)]
+
+        y = 50
+        # sort mods by recently changed
+        for mod in sorted_mods:
+            y += 110
+            self.menu.add_object(menu.Box(
+                "text_" + mod,
+                (screen_size()[0]//2, y),
+                (750, 100),
+                texture=tx.asset("box.png"),
+                texture_splices=[
+                    tx.data("box_on.json"),
+                    tx.data("box_off.json")
+                ],
+                default=True if mod in settings.get()['mods'] else False
+            ), "box")
+            self.menu.add_object(menu.Image(
+                "image_" + mod,
+                (screen_size()[0]//2 - 330, y - 5),
+                (80, 80),
+                texture=mods.path(mod=mod, path='/mod.png')
+            ), "image")
+            self.menu.add_object(menu.Text(
+                "name_" + mod,
+                (screen_size()[0]//2, y - 26),
+                (550, 100),
+                text=mods.load_data(mods.path(mod=mod, path='/mod.json'))['name'],
+                font_color=(255,255,255),
+                font_size=24,
+                font='Monocraft',
+                align='left'
+            ), "text")
+            self.menu.add_object(menu.Text(
+                "author_" + mod,
+                (screen_size()[0]//2, y - 30),
+                (720, 100),
+                text=mods.load_data(mods.path(mod=mod, path='/mod.json'))['author'],
+                font_color=(255,255,255), font_size=16, font='Monocraft', align='right'
+            ), "text")
+            self.menu.add_object(menu.Text(
+                "description_" + mod,
+                (screen_size()[0]//2, y),
+                (550, 100),
+                text=mods.load_data(mods.path(mod=mod, path='/mod.json'))['description'],
+                font_color=(255,255,255),
+                font_size=16,
+                font='Monocraft',
+                align='left'
+            ), "text")
+    
+    def draw(self):
+        self.menu.draw()
+        for text in self.menu.objects['text']:
+            text.draw(screen)
+    
+    def events(self, event):
+        update(self, event)
+        for button in self.menu.objects['button']:
+            if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
+                if button.id == "back_button":
+                    global game_menu
+                    game_menu = MainMenu()
+        for box in self.menu.objects['box']:
+            if box.id.startswith('text_'):
+                _settings = settings.get()
+                if box.value == True and _settings['mods'].count(box.id.split('_')[1]) == 0:
+                    _settings['mods'].append(box.id.split('_')[1])
+                    settings.save(_settings)
+                elif box.value == False and _settings['mods'].count(box.id.split('_')[1]) == 1:
+                    _settings['mods'].remove(box.id.split('_')[1])
+                    settings.save(_settings)
+
+class CreditsMenu():
+    def __init__(self):
+        self.menu = menu.Screen(screen)
+
+        self.menu.add_object(menu.Text(
+            "credits_title",
+            (screen_size()[0]//2, 50),
+            (200, 30),
+            text="Credits",
+            font_color=(255,255,255),
+            font_size=80,
+            font='Monocraft'
+        ), "text")
+        self.menu.add_object(menu.Button(
+            "back_button",
+            (150, 50),
+            (200, 50),
+            texture=tx.asset("button.png"),
+            texture_splices=[
+                tx.data("button_normal.json"),
+                tx.data("button_hover.json")
+            ],
+            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+        ), "button")
+        y = 110
+        for line in open(rf"pycellmachine/credits.txt", 'r').readlines():
+            y += 50
+            self.menu.add_object(menu.Text(
+                "credits_text",
+                (screen_size()[0]//2, y),
+                (200, 30),
+                text=line,
+                font_color=(255,255,255),
+                font_size=40,
+                font='Monocraft'
+            ), "text")
+    
+    def draw(self):
+        self.menu.draw()
+        for text in self.menu.objects['text']:
+            text.draw(screen)
+    
+    def events(self, event):
+        update(self, event)
+        for button in self.menu.objects['button']:
+            if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
+                if button.id == "back_button":
+                    global game_menu
+                    game_menu = MainMenu()
+
+game_menu = MainMenu()
 
 def main():
     while True:

@@ -9,6 +9,10 @@ def window_size():
     w, h = pygame.display.Info().current_w, pygame.display.Info().current_h
     return (w, h)
 
+def screen_size():
+    w, h = pygame.display.get_surface().get_size()
+    return (w, h)
+
 class Object:
     def is_hover(self):
         return self.rect.collidepoint(pygame.mouse.get_pos())
