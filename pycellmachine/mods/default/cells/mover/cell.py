@@ -1,6 +1,8 @@
-import pycellmachine as pcm
+from pycellmachine import api
 
-class Mover(pcm.Cell):
+print(api.mods.enabled)
+
+class Mover(api.Cell):
     def __init__(self, pos, dir):
         super().__init__(
             "mover",
@@ -14,6 +16,5 @@ class Mover(pcm.Cell):
         self.x += self.dir[0]
         self.y += self.dir[1]
     
-    def render(self, grid):
-        self.image = grid.cell_size_x_half_half_half
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+    def render(self, screen):
+        screen.blit(api.tx.get_texture("mover"), (self.x, self.y))

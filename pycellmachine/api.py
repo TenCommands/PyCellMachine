@@ -1,11 +1,25 @@
-import pygame, sys, os, json
-from ._internal import settings
-from ._internal import textures as tx
-from ._internal import mods
+import pygame, json, numpy as math
+from _internal import settings
+from _internal import textures
+from _internal import mods
 
 pygame.init()
 
+api_pygame = pygame
+
+x, y = 0, 0
+
+def vec2_to_deg(vec: tuple = (x, y)) -> float:
+    """Converts a 2D vector (x, y) to degrees."""
+    angle_rad = math.arctan2(vec[1], vec[0])
+    angle_deg = math.degrees(angle_rad) % 360
+    return angle_deg
+
 class Cell(pygame.sprite.Sprite):
+    """
+    Base class for all cells.\n
+    Provides functions for cell movement and rendering.
+    """
     def __init__(self,
                  cell_id: str,
                  pos: tuple,
