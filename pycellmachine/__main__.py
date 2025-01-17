@@ -113,10 +113,9 @@ class MainMenu():
             font_size=20, font_color=(255,255,255), text='Leave Game', font='Monocraft'
         ), "button")
 
-        
-
     def draw(self):
         self.menu.draw()
+
     def events(self, event):
         update(self, event)
         for button in self.menu.objects['button']:
