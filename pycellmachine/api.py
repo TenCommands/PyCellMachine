@@ -1,9 +1,9 @@
 import pygame, json, numpy as math
-from _internal import settings
-from _internal import textures
-from _internal import mods
+from pycellmachine._internal import settings
+from pycellmachine._internal import textures
+from pycellmachine._internal import mods
 
-pygame.init()
+#pygame.init()
 
 api_pygame = pygame
 

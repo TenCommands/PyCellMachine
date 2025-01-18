@@ -1,9 +1,10 @@
 import pygame
+#pygame.init()
 import sys, os, json
-from ._internal import menu
-from ._internal import textures as tx
-from ._internal import settings
-from ._internal import mods
+from pycellmachine._internal import menu
+from pycellmachine._internal import textures as tx
+from pycellmachine._internal import settings
+from pycellmachine._internal import mods
 
 appicon = pygame.image.load(r'pycellmachine/_internal/assets/logo.png')
 pygame.display.set_caption('PyCellMachine')

@@ -2,7 +2,9 @@
 ## Bugs 🐞
 - Texturepacks Screen not indicating actively selected pack.
 ## Modding API ![](/git_assets/python.png)
-```Everything Between Here Is Required For Gameplay To Exist```
+```
+Everything Between Here Is Required For Gameplay To Exist
+```
 - Cell Class
    - Holds initial information that defines the functionality of a Cell
 - Tile Class
@@ -15,6 +17,9 @@
 - Examples
    - A folder within the Cell defining folder allowing for the mod creator to create examples of how the Cell works.
 - Mod Loading
-``` ```
+
+```
+```
+
 - Dev Tools
 - Debug Console

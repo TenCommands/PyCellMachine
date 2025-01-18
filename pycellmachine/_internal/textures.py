@@ -1,7 +1,7 @@
 import pygame, sys, json
 from . import settings
 
-pygame.init()
+#pygame.init()
 
 def splice(texture, splice_json):
     image = texture

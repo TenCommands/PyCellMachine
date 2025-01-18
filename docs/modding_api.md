@@ -1,71 +1,5 @@
 # ![](/git_assets/api_logo.png)
-
-## Overview
-- Introduction to the modding system
-- Key concepts and terminology
-- Getting started with mod development
-
-## Setup & Installation
-- Prerequisites
-- Development environment setup
-- Required dependencies
-
-## Mod Structure
-- File organization
-- Required manifest files
-- Resource management
-- Asset handling
-
-## Core API Reference
-- Cell types and properties
-- Grid manipulation functions
-- Event system
-- Tick system
-
-## Creating Custom Cells
-- Base cell class
-- Cell properties and attributes
-- Behavior implementation
-- Collision handling
-- Texture and appearance
-
-## Examples
-- Basic mod template
-- Custom cell creation
-- Event handling examples
-- Advanced modification samples
-
-## Best Practices
-- Performance optimization
-- Code organization
-- Testing guidelines
-- Common pitfalls
-
-## API Reference
-- Complete function listing
-- Class documentation
-- Property definitions
-- Constants and enums
-
-## Troubleshooting
-- Common issues
-- Debug tools
-- Error handling
-- Support resources
-
-## Version Compatibility
-- API version history
-- Breaking changes
-- Migration guides
-
----
-
-# Overview
-## Introduction to the modding system
-## Key concepts and terminology
-## Getting started with mod development
-
-# Setup & Installation
+# Setup & Usage
 ## Prerequisites
 - You must have PyCellMachine installed on your device.
 - You must have a basic understanding of Python programming with knowledge on Classes, Functions, and Variables.
@@ -77,7 +11,6 @@
 - [Python](https://www.python.org/)
 - [Pygame Community Edition](https://github.com/pygame-community/pygame-ce)
 
-# Mod Structure
 ## File organization
 ![Namespace Folder](/git_assets/folder.png) `namespace`
 
@@ -89,12 +22,18 @@
 
 ![](/git_assets/I.png) ![](/git_assets/blank.png) ![](/git_assets/I-.png) ![Cell Python File](/git_assets/py.png)`cell.py`
 
-![](/git_assets/I.png) ![](/git_assets/blank.png) ![](/git_assets/-.png) ![Cell Json File](/git_assets/json.png)`cell.json`
+![](/git_assets/I.png) ![](/git_assets/blank.png) ![](/git_assets/I-.png) ![Cell Json File](/git_assets/json.png)`cell.json`
 
-![](/git_assets/I-.png) ![Mod Image File](/git_assets/png.png)`mod.png` / `mod.gif`
+![](/git_assets/I.png) ![](/git_assets/blank.png) ![](/git_assets/-.png) ![Cell Json File](/git_assets/folder.png)`examples`* optional
+
+![](/git_assets/I.png) ![](/git_assets/blank.png) ![](/git_assets/blank.png) ![](/git_assets/-.png) ![Cell Json File](/git_assets/json.png)`example.json`
+
+![](/git_assets/I-.png) ![Mod Image File](/git_assets/png.png)`mod.png`
 
 ![](/git_assets/-.png) ![Mod Json File](/git_assets/json.png)`mod.json`
-## Required manifest files
+
+##
+
 ![Mod Json File](/git_assets/json.png)`mod.json`
 ```json
 {
@@ -156,47 +95,28 @@
 
 ##
 
-## Resource management
-## Asset handling
+![](/git_assets/folder.png)`examples/`* optional
 
-# Core API Reference
-## Cell types and properties
-## Grid manipulation functions
-## Event system
-## Tick system
+Every ![](/git_assets/json.png)`.json` file in this folder will be loaded as an example of the cell and you can have as many as you wish.
+```json
+{
+   "name": "Example Name",
+   "description": "Example Description",
+   "example": {
+      "level": "code",
+      "ticks": 10,
+      "interactive": true
+   }
+}
+```
 
-# Creating Custom Cells
-## Base cell class
-## Cell properties and attributes
-## Behavior implementation
-## Collision handling
-## Texture and appearance
+`name` - The name of the example.
 
-# Examples
-## Basic mod template
-## Custom cell creation
-## Event handling examples
-## Advanced modification samples
+`description` - A brief description of the example.
 
-# Best Practices
-## Performance optimization
-## Code organization
-## Testing guidelines
-## Common pitfalls
+`example` - The example.
+   - `level` - The level save code of the example.
+   - `ticks` - The amount of ticks to run the example for.
+   - `interactive` - Allows for players to drag cells around or click on cells in the example.
 
-# API Reference
-## Complete function listing
-## Class documentation
-## Property definitions
-## Constants and enums
-
-# Troubleshooting
-## Common issues
-## Debug tools
-## Error handling
-## Support resources
-
-# Version Compatibility
-## API version history
-## Breaking changes
-## Migration guides
+##
