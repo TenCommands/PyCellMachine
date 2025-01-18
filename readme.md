@@ -7,7 +7,8 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/tencommands/PyCellMachine)
 
 
-**Note**: The current state of the project is just a main menu, a texture pack menu, and a settings menu. These menus are functional but there is still no gameplay yet.
+**Note**: There is currently still no functional gameplay.
+
 ## License
 
 PyCellMachine is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3 (AGPL-3.0). This means:
@@ -48,3 +49,5 @@ This project is a complete recreation of the original Cell Machine game, but wit
 - ![](/git_assets/github.png) Open-source codebase for transparency and collaboration right here on Github
 - Modding API - The game is designed to be easily moddable with a custom modding API built with Python. [Learn more about the API here](/docs/modding_api.md)
 - Coooperative Multiplayer - Players can work together to solve or create levels
+
+### [To-Do List](/docs/todo.md)
