@@ -1,6 +1,7 @@
 # To-Do List
 ## Bugs 🐞
 - Texturepacks Screen not indicating actively selected pack.
+- Make [build.bat](/build.bat) build an executable file which can be run from anywhere to play the game without needing to activate the executable from terminal.
 ## Modding API ![](/git_assets/python.png)
 ```
 Everything Between Here Is Required For Gameplay To Exist
