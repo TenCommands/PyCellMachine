@@ -17,12 +17,12 @@ enabled = settings.get()['mods']
 
 def is_override(asset):
     # if the active texturepack has the same asset as the mod, return true
-    if os.path.exists(rf"pycellmachine/texturepacks/{settings.get('texturepack')}/assets/{asset}"):
+    if os.path.exists(rf"./texturepacks/{settings.get('texturepack')}/assets/{asset}"):
         return True
     return False
 
 def path(mod, path):
-    return rf"pycellmachine/mods/{mod}{path}"
+    return rf"./mods/{mod}{path}"
 
 def load_data(path):
     with open(path, 'r') as f:

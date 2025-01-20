@@ -1,14 +1,14 @@
 import pygame
 #pygame.init()
-import sys, os, json
+import sys, os, json, traceback
 from pycellmachine._internal import menu
 from pycellmachine._internal import textures as tx
 from pycellmachine._internal import settings
 from pycellmachine._internal import mods
 
-appicon = pygame.image.load(r'pycellmachine/_internal/assets/logo.png')
+#appicon = pygame.image.load(r'./_internal/assets/logo.png')
 pygame.display.set_caption('PyCellMachine')
-pygame.display.set_icon(appicon)
+#pygame.display.set_icon(appicon)
 
 global game_menu
 game_menu = None
@@ -36,6 +36,41 @@ def update(self, event):
         for object in self.menu.objects[type]:
             object.update(event)
 
+def get_resource_path(relative_path):
+    # Get absolute path to resource
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable
+        base_path = os.path.dirname(sys.executable)
+    else:
+        # Running as script
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    return os.path.join(base_path, '_internal', 'assets', relative_path)
+
+class LoadingMenu():
+    def __init__(self):
+        self.menu = menu.Screen(screen)
+
+        self.loading_image = pygame.image.load(get_resource_path('title.png'))
+    
+    def draw(self):
+        if pygame.time.get_ticks() / 1000 > 5:
+            # fade out self.loading_image by alpha
+            self.loading_image.set_alpha(255 - (pygame.time.get_ticks() / 1000 - 5) * 255)
+            if pygame.time.get_ticks() / 1000 > 6:
+                global game_menu
+                game_menu = MainMenu()
+        else: 
+            self.loading_image.set_alpha(pygame.time.get_ticks() / 1500 * 255)
+        screen.fill((0, 0, 0))
+        screen.blit(self.loading_image, (screen_size()[0]//2 - self.loading_image.get_width()//2, screen_size()[1]//2 - self.loading_image.get_height()//2))
+        self.menu.draw()
+    
+    def events(self, event, deltaTime):
+        update(self, event)
+        
+            
+
 class MainMenu():
     def __init__(self):
         self.menu = menu.Screen(screen)
@@ -44,7 +79,7 @@ class MainMenu():
             "title",
             (screen_size()[0] // 2, 100),
             (1578, 160),
-            texture="pycellmachine/_internal/assets/title.png"
+            texture="./_internal/assets/title.png"
         ), "image")
 
         self.menu.add_object(menu.Button(
@@ -116,8 +151,12 @@ class MainMenu():
 
     def draw(self):
         self.menu.draw()
+        # draw a transparent black rectangle over the screen that fades out over a second
+        if 10 > pygame.time.get_ticks() / 1000 > 5:
+            time = int((5000 - pygame.time.get_ticks()) / 1000)
+            pygame.draw.rect(screen, (0, 0, 0), (0, 0, screen_size()[0], screen_size()[1]), time)
 
-    def events(self, event):
+    def events(self, event, deltaTime):
         update(self, event)
         for button in self.menu.objects['button']:
             if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
@@ -281,7 +320,7 @@ class SettingsMenu():
                     _settings['options'][section][name] = obj.values
         settings.save(_settings)
 
-    def events(self, event):
+    def events(self, event, deltaTime):
         update(self, event)
         for scrollbar in self.menu.objects['scrollbar']:
             if (event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEMOTION):
@@ -320,9 +359,9 @@ class TexturepacksMenu():
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
 
-        # for texturepack in os.listdir(rf"pycellmachine/texturepacks"):
+        # for texturepack in os.listdir(rf"./texturepacks"):
         y = 50
-        for texturepack in os.listdir(rf"pycellmachine/texturepacks"):
+        for texturepack in os.listdir(rf"./texturepacks"):
             y += 110
             self.menu.add_object(menu.Box(
                 "text_" + texturepack,
@@ -376,7 +415,7 @@ class TexturepacksMenu():
         for text in self.menu.objects['text']:
             text.draw(screen)
     
-    def events(self, event):
+    def events(self, event, deltaTime):
         update(self, event)
         for button in self.menu.objects['button']:
             if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
@@ -416,8 +455,8 @@ class ModsMenu():
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
 
-        mod_paths = [(mod, os.path.getctime(os.path.join("pycellmachine/mods", mod))) 
-            for mod in os.listdir("pycellmachine/mods")]
+        mod_paths = [(mod, os.path.getctime(os.path.join("./mods", mod))) 
+            for mod in os.listdir("./mods")]
         sorted_mods = [mod for mod, _ in sorted(mod_paths, key=lambda x: x[1], reverse=True)]
 
         y = 50
@@ -474,7 +513,7 @@ class ModsMenu():
         for text in self.menu.objects['text']:
             text.draw(screen)
     
-    def events(self, event):
+    def events(self, event, deltaTime):
         update(self, event)
         for button in self.menu.objects['button']:
             if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
@@ -516,7 +555,7 @@ class CreditsMenu():
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
         y = 110
-        for line in open(rf"pycellmachine/credits.txt", 'r').readlines():
+        for line in open(rf"./credits.txt", 'r').readlines():
             y += 50
             self.menu.add_object(menu.Text(
                 "credits_text",
@@ -533,7 +572,7 @@ class CreditsMenu():
         for text in self.menu.objects['text']:
             text.draw(screen)
     
-    def events(self, event):
+    def events(self, event, deltaTime):
         update(self, event)
         for button in self.menu.objects['button']:
             if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
@@ -541,23 +580,27 @@ class CreditsMenu():
                     global game_menu
                     game_menu = MainMenu()
 
-game_menu = MainMenu()
+game_menu = LoadingMenu()
 
 def main():
     while True:
+        dt = delta_time(clock, 60)
+
         screen.fill((100, 100, 100))
 
         for event in pygame.event.get():
             default_events(event)
-            game_menu.events(event)
+            game_menu.events(event, dt)
         
         game_menu.draw()
         
-        
         pygame.display.update()
 
-        dt = delta_time(clock, 60)
-
 if __name__ == "__main__":
-    game = main()
-    game.run()
+    try:
+        main().run()
+    except Exception as e:
+        with open('error_log.txt', 'w') as f:
+            f.write(f"Error: {str(e)}\n")
+            f.write(traceback.format_exc())
+        input("Press Enter to exit...")
