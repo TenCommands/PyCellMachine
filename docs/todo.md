@@ -24,3 +24,11 @@ Everything Between Here Is Required For Gameplay To Exist
 
 - Dev Tools
 - Debug Console
+
+## Audio
+- Music from CMMM+MM
+- Music specifically made for PyCellMachine
+- UI sound effects
+- Cell Sound Effects
+- Note Cell
+   - Will play a specified audio file when a cell collides with it and then output said Cell on the opposite side when it's done playing.
