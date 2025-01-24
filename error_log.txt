@@ -1,0 +1,17 @@
+Error: No file './_internal/assets/title.png' found in working directory 'D:\GitHub\PyCellMachine'.
+Traceback (most recent call last):
+  File "D:\GitHub\PyCellMachine\pycellmachine\__main__.py", line 599, in <module>
+    main().run()
+    ^^^^^^
+  File "D:\GitHub\PyCellMachine\pycellmachine\__main__.py", line 593, in main
+    game_menu.draw()
+  File "D:\GitHub\PyCellMachine\pycellmachine\__main__.py", line 62, in draw
+    game_menu = MainMenu()
+                ^^^^^^^^^^
+  File "D:\GitHub\PyCellMachine\pycellmachine\__main__.py", line 76, in __init__
+    self.menu.add_object(menu.Image(
+                         ^^^^^^^^^^^
+  File "D:\GitHub\PyCellMachine\pycellmachine\_internal\menu.py", line 429, in __init__
+    self.image = pygame.image.load(texture).convert_alpha()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: No file './_internal/assets/title.png' found in working directory 'D:\GitHub\PyCellMachine'.

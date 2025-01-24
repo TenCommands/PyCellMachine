@@ -1,4 +1,4 @@
-import pygame, sys, json
+import pygame, sys, os, json
 from . import settings
 
 #pygame.init()
@@ -20,14 +20,26 @@ def splice(texture, splice_json):
              height))
     return slices
 
+def get_resource_path(relative_path):
+    # Get absolute path to resource
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable
+        base_path = os.path.dirname(sys.executable)
+    else:
+        # Running as script
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    base_path = os.path.dirname(base_path)
+    
+    return os.path.join(base_path, relative_path)
+
 def asset(texture_path):
-    return rf"./texturepacks/{settings.get('texturepack')}/assets/{texture_path}"
+    return get_resource_path(rf".\texturepacks\{settings.get('texturepack')}\assets\{texture_path}")
 
 def data(data_path):
-    return rf"./texturepacks/{settings.get('texturepack')}/data/{data_path}"
+    return get_resource_path(rf".\texturepacks\{settings.get('texturepack')}\data\{data_path}")
 
 def texturepack(pack=settings.get('texturepack'), path="/"):
-    return rf"./texturepacks/{pack}{path}"
+    return get_resource_path(rf".\texturepacks\{pack}{path}")
 
 def load_texture(path):
     return pygame.image.load(asset(path)).convert_alpha()

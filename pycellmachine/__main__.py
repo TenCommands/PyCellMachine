@@ -36,22 +36,13 @@ def update(self, event):
         for object in self.menu.objects[type]:
             object.update(event)
 
-def get_resource_path(relative_path):
-    # Get absolute path to resource
-    if getattr(sys, 'frozen', False):
-        # Running as compiled executable
-        base_path = os.path.dirname(sys.executable)
-    else:
-        # Running as script
-        base_path = os.path.dirname(os.path.abspath(__file__))
-    
-    return os.path.join(base_path, '_internal', 'assets', relative_path)
+
 
 class LoadingMenu():
     def __init__(self):
         self.menu = menu.Screen(screen)
 
-        self.loading_image = pygame.image.load(get_resource_path('title.png'))
+        self.loading_image = pygame.image.load(tx.get_resource_path(r'.\_internal\assets\title.png'))
     
     def draw(self):
         if pygame.time.get_ticks() / 1000 > 5:
@@ -69,8 +60,6 @@ class LoadingMenu():
     def events(self, event, deltaTime):
         update(self, event)
         
-            
-
 class MainMenu():
     def __init__(self):
         self.menu = menu.Screen(screen)
@@ -79,17 +68,17 @@ class MainMenu():
             "title",
             (screen_size()[0] // 2, 100),
             (1578, 160),
-            texture="./_internal/assets/title.png"
+            texture=tx.get_resource_path('./_internal/assets/title.png')
         ), "image")
 
         self.menu.add_object(menu.Button(
             "play_button",
             (300, 250),
             (200, 30),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Play', font='Monocraft'
         ), "button")
@@ -97,10 +86,10 @@ class MainMenu():
             "settings_button",
             (300, 300),
             (200, 30),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Settings', font='Monocraft'
         ), "button")
@@ -108,10 +97,10 @@ class MainMenu():
             "texturepacks_button",
             (300, 350),
             (200, 30),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Texture Packs', font='Monocraft'
         ), "button")
@@ -119,10 +108,10 @@ class MainMenu():
             "mods_button",
             (300, 400),
             (200, 30),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Mods', font='Monocraft'
         ), "button")
@@ -130,10 +119,10 @@ class MainMenu():
             "credits_button",
             (300, 450),
             (200, 30),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Credits', font='Monocraft'
         ), "button")
@@ -141,10 +130,10 @@ class MainMenu():
             "exit_button",
             (300, 500),
             (200, 30),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Leave Game', font='Monocraft'
         ), "button")
@@ -210,10 +199,10 @@ class SettingsMenu():
                         (screen_size()[0]-260, y),
                         (30, 30),
                         default=value,
-                        texture=tx.asset("box.png"),
+                        texture=tx.asset("ui/box.png"),
                         texture_splices=[
-                            tx.data("box_on.json"),
-                            tx.data("box_off.json")
+                            tx.data("ui/box_on.json"),
+                            tx.data("ui/box_off.json")
                         ]
                     ), "box")
                 if isinstance(value, float):
@@ -223,23 +212,23 @@ class SettingsMenu():
                         (300, 30),
                         default=50,
                         values=range(0, 100),
-                        texture=tx.asset("slider.png"),
+                        texture=tx.asset("ui/slider.png"),
                         texture_splices=[
-                            tx.data("slider.json"),
-                            tx.data("clear.json"),
-                            tx.data("slider_bar.json")
+                            tx.data("ui/slider.json"),
+                            tx.data("ui/clear.json"),
+                            tx.data("ui/slider_bar.json")
                         ]
-                    ), "slider")
+                    ), "slide")
                 if isinstance(value, str):
                     self.menu.add_object(menu.Keybind(
                         section + '.' + key,
                         (screen_size()[0]-260, y),
                         (300, 30),
                         default=value.replace('_',' ').replace('.',' ').title(),
-                        texture=tx.asset("keybind.png"),
+                        texture=tx.asset("ui/keybind.png"),
                         texture_splices=[
-                            tx.data("keybind_normal.json"),
-                            tx.data("keybind_hover.json")
+                            tx.data("ui/keybind_normal.json"),
+                            tx.data("ui/keybind_hover.json")
                         ],
                         font_color=(255,255,255), font='Monocraft', font_size=20
                     ), "keybind")
@@ -250,10 +239,10 @@ class SettingsMenu():
                         (300, 30),
                         default=value[1:].index(value[0]) if value[0] in value[1:] else 0,
                         options=value[1:],
-                        texture=tx.asset("dropdown.png"),
+                        texture=tx.asset("ui/dropdown.png"),
                         texture_splices=[
-                            tx.data("dropdown_normal.json"),
-                            tx.data("dropdown_hover.json")
+                            tx.data("ui/dropdown_normal.json"),
+                            tx.data("ui/dropdown_hover.json")
                         ],
                         font_size=20, font_color=(255,255,255), font='Monocraft'
                     ), "dropdown")
@@ -272,13 +261,13 @@ class SettingsMenu():
         ), "text")
 
         self.menu.add_object(menu.Scrollbar(
-            "settings_scrollbar",
+            "settings_scrollba",
             (screen_size()[0]-40, screen_size()[1]//2),
             (20, screen_size()[1]-30),
-            texture=tx.asset("slider.png"),
+            texture=tx.asset("ui/slider.png"),
             texture_splices=[
-                tx.data("slider.json"),
-                tx.data("slider_bar.json")
+                tx.data("ui/slider.json"),
+                tx.data("ui/slider_bar.json")
             ]
         ), "scrollbar")
 
@@ -286,10 +275,10 @@ class SettingsMenu():
             "back_button",
             (150, 50),
             (200, 50),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
@@ -351,26 +340,26 @@ class TexturepacksMenu():
             "back_button",
             (150, 50),
             (200, 50),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
 
         # for texturepack in os.listdir(rf"./texturepacks"):
         y = 50
-        for texturepack in os.listdir(rf"./texturepacks"):
+        for texturepack in os.listdir(tx.get_resource_path(rf"./texturepacks")):
             y += 110
             self.menu.add_object(menu.Box(
                 "text_" + texturepack,
                 (screen_size()[0]//2, y),
                 (750, 100),
-                texture=tx.asset("box.png"),
+                texture=tx.asset("ui/box.png"),
                 texture_splices=[
-                    tx.data("box_off.json"),
-                    tx.data("box_off.json")
+                    tx.data("ui/box_off.json"),
+                    tx.data("ui/box_off.json")
                 ]
             ), "box")
             self.menu.add_object(menu.Image(
@@ -447,16 +436,16 @@ class ModsMenu():
             "back_button",
             (150, 50),
             (200, 50),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
 
-        mod_paths = [(mod, os.path.getctime(os.path.join("./mods", mod))) 
-            for mod in os.listdir("./mods")]
+        mod_paths = [(mod, os.path.getctime(os.path.join(tx.get_resource_path("./mods"), mod))) 
+            for mod in os.listdir(tx.get_resource_path("./mods"))]
         sorted_mods = [mod for mod, _ in sorted(mod_paths, key=lambda x: x[1], reverse=True)]
 
         y = 50
@@ -467,10 +456,10 @@ class ModsMenu():
                 "text_" + mod,
                 (screen_size()[0]//2, y),
                 (750, 100),
-                texture=tx.asset("box.png"),
+                texture=tx.asset("ui/box.png"),
                 texture_splices=[
-                    tx.data("box_on.json"),
-                    tx.data("box_off.json")
+                    tx.data("ui/box_on.json"),
+                    tx.data("ui/box_off.json")
                 ],
                 default=True if mod in settings.get()['mods'] else False
             ), "box")
@@ -547,15 +536,15 @@ class CreditsMenu():
             "back_button",
             (150, 50),
             (200, 50),
-            texture=tx.asset("button.png"),
+            texture=tx.asset("ui/button.png"),
             texture_splices=[
-                tx.data("button_normal.json"),
-                tx.data("button_hover.json")
+                tx.data("ui/button_normal.json"),
+                tx.data("ui/button_hover.json")
             ],
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
         y = 110
-        for line in open(rf"./credits.txt", 'r').readlines():
+        for line in open(tx.get_resource_path(rf"./credits.txt"), 'r').readlines():
             y += 50
             self.menu.add_object(menu.Text(
                 "credits_text",
@@ -597,10 +586,4 @@ def main():
         pygame.display.update()
 
 if __name__ == "__main__":
-    try:
-        main().run()
-    except Exception as e:
-        with open('error_log.txt', 'w') as f:
-            f.write(f"Error: {str(e)}\n")
-            f.write(traceback.format_exc())
-        input("Press Enter to exit...")
+    main().run()

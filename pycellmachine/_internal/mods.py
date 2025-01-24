@@ -1,5 +1,6 @@
 import os, json
 from . import settings
+from . import textures as tx
 
 enabled = settings.get()['mods']
 
@@ -22,7 +23,7 @@ def is_override(asset):
     return False
 
 def path(mod, path):
-    return rf"./mods/{mod}{path}"
+    return tx.get_resource_path(rf"./mods/{mod}{path}")
 
 def load_data(path):
     with open(path, 'r') as f:
