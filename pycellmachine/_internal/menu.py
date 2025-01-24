@@ -23,16 +23,21 @@ class Object:
         self.y = pos[1]
         # remake rect object with the new position at the center
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
-
+    
         # Move any additional rects if they exist
         if hasattr(self, 'chips'):
             for i, chip in enumerate(self.chips):
                 chip.x = self.x + (self.width/len(self.values))*i - self.width/2 + (self.width/len(self.values))/2 - 7.5
                 chip.y = self.y - self.height/2
-
+    
         if hasattr(self, 'value_rect'):
-            self.value_rect.x = self.x + (self.width/len(self.values))*self.value - self.width/2 + (self.width/len(self.values))/2 - 7.5
-            self.value_rect.y = self.y - self.height/2 - 4
+            if hasattr(self, 'values'):  # For Slider objects
+                self.value_rect.x = self.x + (self.width/len(self.values))*self.value - self.width/2 + (self.width/len(self.values))/2 - 7.5
+                self.value_rect.y = self.y - self.height/2 - 4
+            else:  # For Scrollbar objects
+                self.value_rect.x = self.x - self.width/2 - 4
+                self.value_rect.y = self.y + self.height/2 - (self.height * self.value) - self.value_rect.height/2
+
 
 
     def size(self, size):

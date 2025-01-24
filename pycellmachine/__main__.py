@@ -261,7 +261,7 @@ class SettingsMenu():
         ), "text")
 
         self.menu.add_object(menu.Scrollbar(
-            "settings_scrollba",
+            "settings_scrollbar",
             (screen_size()[0]-40, screen_size()[1]//2),
             (20, screen_size()[1]-30),
             texture=tx.asset("ui/slider.png"),
