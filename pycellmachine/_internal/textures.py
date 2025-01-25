@@ -5,8 +5,12 @@ from . import settings
 
 def splice(texture, splice_json):
     image = texture
-    with open(splice_json, 'r') as f:
-        splice_data = json.load(f)['slices']
+
+    if type(splice_json) == str:
+        splice_data = load_data(splice_json)
+    else:
+        splice_data = splice_json
+    
     slices = {}
     for splice in splice_data:
         data = splice_data[splice]
@@ -36,7 +40,7 @@ def asset(texture_path):
     return get_resource_path(rf".\texturepacks\{settings.get('texturepack')}\assets\{texture_path}")
 
 def data(data_path):
-    return get_resource_path(rf".\texturepacks\{settings.get('texturepack')}\data\{data_path}")
+    return load_data(get_resource_path(rf".\texturepacks\{settings.get('texturepack')}\data\{data_path}"))
 
 def texturepack(pack=settings.get('texturepack'), path="/"):
     return get_resource_path(rf".\texturepacks\{pack}{path}")

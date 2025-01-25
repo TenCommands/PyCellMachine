@@ -75,7 +75,7 @@ class Object:
 
 
 class Button(Object):
-    def __init__(self, id, pos, size, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), text='', font='Arial'):
+    def __init__(self, id, pos, size, texture=None, splices=None, font_size=20, font_color=(255,255,255), text='', font='Arial'):
         pygame.font.init()
         self.id = id
         self.text = text
@@ -87,16 +87,16 @@ class Button(Object):
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
         self.texture = pygame.image.load(texture).convert_alpha()
-        self.texture_splices = [
-            tx.splice(self.texture, texture_splices[0]),
-            tx.splice(self.texture, texture_splices[1])
+        self.splices = [
+            tx.splice(self.texture, splices['normal']),
+            tx.splice(self.texture, splices['hover'])
         ]
     
     def draw(self, screen):
         if self.is_hover():
-            splices = self.texture_splices[1]
+            splices = self.splices[1]
         else:
-            splices = self.texture_splices[0]
+            splices = self.splices[0]
         
         self.draw_splices(splices, screen, self.rect, self.width, self.height)
 
@@ -108,7 +108,8 @@ class Button(Object):
         pass
 
 class Slider(Object):
-    def __init__(self, id, pos, size, values, default=0, texture=None, texture_splices=None):
+    def __init__(self, id, pos, size, values, default=0, texture=None, splices=None, chips=True):
+        self.chips = chips
         self.clicked = False
         self.id = id
         self.x = pos[0]
@@ -118,10 +119,10 @@ class Slider(Object):
         self.width = size[0]
         self.height = size[1]
         self.texture = pygame.image.load(texture).convert_alpha()
-        self.texture_splices = [
-            tx.splice(self.texture, texture_splices[0]),
-            tx.splice(self.texture, texture_splices[1]),
-            tx.splice(self.texture, texture_splices[2])
+        self.splices = [
+            tx.splice(self.texture, splices['background']),
+            tx.splice(self.texture, splices['chip']),
+            tx.splice(self.texture, splices['bar'])
         ]
 
         self.chips = []
@@ -143,13 +144,14 @@ class Slider(Object):
                             self.height + 6)
 
     def draw(self, screen):
-        splices = self.texture_splices[0]
+        splices = self.splices[0]
         self.draw_splices(splices, screen, self.rect, self.width, self.height)
-        splices = self.texture_splices[1]
-        # draw bars in self.bars
-        for i in range(len(self.chips)):
-            self.draw_splices(splices, screen, self.chips[i], self.chips[i].width, self.chips[i].height)
-        splices = self.texture_splices[2]
+        if self.chips == True:
+            splices = self.splices[1]
+            # draw bars in self.bars
+            for i in range(len(self.chips)):
+                self.draw_splices(splices, screen, self.chips[i], self.chips[i].width, self.chips[i].height)
+        splices = self.splices[2]
         self.draw_splices(splices, screen, self.value_rect, self.value_rect.width, self.value_rect.height)
 
     def update(self, event):
@@ -175,7 +177,7 @@ class Slider(Object):
         return self.values[self.value]
 
 class Scrollbar(Object):
-    def __init__(self, id, pos, size, default=1.0, texture=None, texture_splices=None):
+    def __init__(self, id, pos, size, default=1.0, texture=None, splices=None):
         self.relative_y = 0
         self.previous_y = 0
         self.clicked = False
@@ -186,9 +188,9 @@ class Scrollbar(Object):
         self.width = size[0]
         self.height = size[1]
         self.texture = pygame.image.load(texture).convert_alpha()
-        self.texture_splices = [
-            tx.splice(self.texture, texture_splices[0]),
-            tx.splice(self.texture, texture_splices[1])
+        self.splices = [
+            tx.splice(self.texture, splices['background']),
+            tx.splice(self.texture, splices['bar'])
         ]
 
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
@@ -198,9 +200,9 @@ class Scrollbar(Object):
                                     15)
 
     def draw(self, screen):
-        splices = self.texture_splices[0]
+        splices = self.splices[0]
         self.draw_splices(splices, screen, self.rect, self.width, self.height)
-        splices = self.texture_splices[1]
+        splices = self.splices[1]
         self.draw_splices(splices, screen, self.value_rect, self.value_rect.width, self.value_rect.height)
 
     def update(self, event):
@@ -230,7 +232,7 @@ class Scrollbar(Object):
         return self.value
 
 class Box(Object):
-    def __init__(self, id, pos, size, default = False, texture=None, texture_splices=None):
+    def __init__(self, id, pos, size, default = False, texture=None, splices=None):
         self.clicked = False
         self.id = id
         self.x = pos[0]
@@ -239,18 +241,18 @@ class Box(Object):
         self.height = size[1]
         self.value = default
         self.texture = pygame.image.load(texture).convert_alpha()
-        self.texture_splices = [
-            tx.splice(self.texture, texture_splices[0]),
-            tx.splice(self.texture, texture_splices[1])
+        self.splices = [
+            tx.splice(self.texture, splices['on']),
+            tx.splice(self.texture, splices['off'])
         ]
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
     
     def draw(self, screen):
         if self.value:
-            splices = self.texture_splices[0]
+            splices = self.splices[0]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
         else:
-            splices = self.texture_splices[1]
+            splices = self.splices[1]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
     
     def update(self, event):
@@ -260,7 +262,7 @@ class Box(Object):
             self.clicked = True
 
 class Keybind(Object):
-    def __init__(self, id, pos, size, default=None, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, default=None, texture=None, splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
         self.clicked = False
         self.id = id
         self.x = pos[0]
@@ -269,9 +271,9 @@ class Keybind(Object):
         self.height = size[1]
         self.value = default
         self.texture = pygame.image.load(texture).convert_alpha()
-        self.texture_splices = [
-            tx.splice(self.texture, texture_splices[0]),
-            tx.splice(self.texture, texture_splices[1])
+        self.splices = [
+            tx.splice(self.texture, splices['normal']),
+            tx.splice(self.texture, splices['hover'])
         ]
         self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
@@ -279,10 +281,10 @@ class Keybind(Object):
     
     def draw(self, screen):
         if not self.is_hover() and not self.clicked:
-            splices = self.texture_splices[0]
+            splices = self.splices[0]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
         else:
-            splices = self.texture_splices[1]
+            splices = self.splices[1]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
         text = self.font.render(str(self.value), True, self.font_color)
         text_rect = text.get_rect(center=self.rect.center)
@@ -296,7 +298,7 @@ class Keybind(Object):
             self.clicked = False
 
 class Dropdown(Object):
-    def __init__(self, id, pos, size, options=[None, None], default=None, texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, options=[None, None], default=None, texture=None, splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
         self.clicked = False
         self.hovering = -1
         self.id = id
@@ -307,9 +309,9 @@ class Dropdown(Object):
         self.value = default
         self.values = options
         self.texture = pygame.image.load(texture).convert_alpha()
-        self.texture_splices = [
-            tx.splice(self.texture, texture_splices[0]),
-            tx.splice(self.texture, texture_splices[1])
+        self.splices = [
+            tx.splice(self.texture, splices['normal']),
+            tx.splice(self.texture, splices['hover'])
         ]
         self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
@@ -317,13 +319,13 @@ class Dropdown(Object):
     
     def draw(self, screen):
         if not self.clicked:
-            splices = self.texture_splices[0]
+            splices = self.splices[0]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
         else:
-            splices = self.texture_splices[1]
+            splices = self.splices[1]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
             # render all possible values
-            splices = self.texture_splices[0]
+            splices = self.splices[0]
             
             box_rect = pygame.Rect(self.x - self.width/2, self.y + self.height/2, self.width, self.height * len(self.values))
             self.draw_splices(splices, screen, box_rect, self.width, self.height * len(self.values))
@@ -354,7 +356,7 @@ class Dropdown(Object):
             self.clicked = True
         
 class Textbox(Object):
-    def __init__(self, id, pos, size, default='', texture=None, texture_splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, default='', texture=None, splices=None, font_size=20, font_color=(255,255,255), font='Arial'):
         self.clicked = False
         self.id = id
         self.x = pos[0]
@@ -363,9 +365,9 @@ class Textbox(Object):
         self.height = size[1]
         self.text = default
         self.texture = pygame.image.load(texture).convert_alpha()
-        self.texture_splices = [
-            tx.splice(self.texture, texture_splices[0]),
-            tx.splice(self.texture, texture_splices[1])
+        self.splices = [
+            tx.splice(self.texture, splices['normal']),
+            tx.splice(self.texture, splices['hover'])
         ]
         self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
@@ -373,10 +375,10 @@ class Textbox(Object):
 
     def draw(self, screen):
         if not self.clicked:
-            splices = self.texture_splices[0]
+            splices = self.splices[0]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
         else:
-            splices = self.texture_splices[1]
+            splices = self.splices[1]
             self.draw_splices(splices, screen, self.rect, self.width, self.height)
         text = self.font.render(str(self.text), True, self.font_color)
         text_rect = text.get_rect(center=self.rect.center)
@@ -438,7 +440,6 @@ class Image(Object):
         scaled_image = pygame.transform.scale(self.image, (self.width, self.height))
         screen.blit(scaled_image, self.rect)
         
-    
     def update(self, event):
         pass
 
@@ -454,7 +455,7 @@ class Screen:
             self.objects[type] = []
         self.objects[type].append(object)
 
-    def draw(self):
+    def render(self):
         for type in self.objects:
             for object in self.objects[type]:
                 object.draw(self.screen)

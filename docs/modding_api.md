@@ -59,6 +59,13 @@
 
 ##
 
+![Cell Image File](/git_assets/png.png)`cell.png`
+
+- Will be stretched to fit the cell meaning you can whatever size you want but it may only look good with 2<sup>^x</sup> size.
+- On top of that [texturepacks](/docs/texturepacks.md) can override the texture. [See here](/docs/texturepacks.md#modded).
+
+##
+
 ![Cell Json File](/git_assets/json.png)`cell.json`
 ```json
 {
