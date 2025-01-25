@@ -1,6 +1,6 @@
 {
     "pack_format": 1,
-    "name": "Redmode",
-    "description": "Test texturepack that replaces blue with red",
+    "name": "Test Pack",
+    "description": "Test texture pack",
     "author": "TauCommands"
 }
