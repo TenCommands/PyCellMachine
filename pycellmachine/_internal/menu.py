@@ -443,7 +443,14 @@ class Image(Object):
     def update(self, event):
         pass
 
-class Screen:
+class App:
+    def __init__(self):
+        self.game_menu = None
+    
+    def change_menu(self, menu):
+        self.game_menu = menu
+
+class Screen(App):
     def __init__(self, screen):
         pygame.font.init()
         self.screen = screen
