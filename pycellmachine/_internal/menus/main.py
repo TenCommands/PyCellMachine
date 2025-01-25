@@ -7,7 +7,6 @@ import pycellmachine._internal.menus as menus
 class MainMenu(menu.Screen):
     def __init__(self, screen):
         super().__init__(screen)
-
         self.screen = screen
 
         self.add_object(menu.Image(
