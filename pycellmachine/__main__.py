@@ -1,10 +1,16 @@
 import pygame
 #pygame.init()
 import sys, os, json, traceback
+from pycellmachine._internal import logging
 from pycellmachine._internal import menu
 from pycellmachine._internal import textures as tx
 from pycellmachine._internal import settings
 from pycellmachine._internal import mods
+
+log_file = logging.log_file("game.log")
+
+log_file.clear()
+log_file.write("PyCellMachine v0.0.1")
 
 #appicon = pygame.image.load(r'./_internal/assets/logo.png')
 pygame.display.set_caption('PyCellMachine')
@@ -181,11 +187,20 @@ class SettingsMenu(menu.Screen):
                         (screen_size()[0]-260, y),
                         (300, 30),
                         default=50,
-                        values=range(0, 100),
+                        values=range(0, 101),
                         texture=tx.asset("ui/slider.png"),
                         splices=tx.data("ui/slider.json"),
                         chips=False
-                    ), "slide")
+                    ), "slider")
+                    self.add_object(menu.Text(
+                        section + '.' + key + '_value',
+                        (screen_size()[0]-480, y),
+                        (300, 30),
+                        text=str(value*100)+'%',
+                        font_color=(255,255,255),
+                        font_size=20,
+                        font='Monocraft'
+                    ), "slider_text")
                 if isinstance(value, str):
                     self.add_object(menu.Keybind(
                         section + '.' + key,
@@ -263,6 +278,7 @@ class SettingsMenu(menu.Screen):
                         obj.values.insert(0, obj.values[obj.value])
                     _settings['options'][section][name] = obj.values
         settings.save(_settings)
+        log_file.write('Settings saved')
 
     def events(self, event, deltaTime):
         self.update(event)
@@ -276,6 +292,9 @@ class SettingsMenu(menu.Screen):
                     self.save_settings()
                     global game_menu
                     game_menu = MainMenu(screen)
+        for slider_text, slider in zip(self.objects['slider_text'], self.objects['slider']):
+            slider_text.text = str(slider.value)+'%'
+            
 
 class TexturepacksMenu(menu.Screen):
     def __init__(self, screen):
@@ -300,7 +319,6 @@ class TexturepacksMenu(menu.Screen):
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
 
-        # for texturepack in os.listdir(rf"./texturepacks"):
         y = 50
         for texturepack in os.listdir(tx.get_resource_path(rf"./texturepacks")):
             y += 110
@@ -367,6 +385,7 @@ class TexturepacksMenu(menu.Screen):
                     _settings = settings.get()
                     _settings['texturepack'] = box.id.split('_')[1]
                     settings.save(_settings)
+                    log_file.write("Texturepack set to " + box.id.split('_')[1])
 
 class ModsMenu(menu.Screen):
     def __init__(self, screen):
@@ -458,9 +477,11 @@ class ModsMenu(menu.Screen):
                 if box.value == True and _settings['mods'].count(box.id.split('_')[1]) == 0:
                     _settings['mods'].append(box.id.split('_')[1])
                     settings.save(_settings)
+                    log_file.write("Mod " + box.id.split('_')[1] + " enabled")
                 elif box.value == False and _settings['mods'].count(box.id.split('_')[1]) == 1:
                     _settings['mods'].remove(box.id.split('_')[1])
                     settings.save(_settings)
+                    log_file.write("Mod " + box.id.split('_')[1] + " disabled")
 
 class CreditsMenu(menu.Screen):
     def __init__(self, screen):
@@ -509,21 +530,29 @@ class CreditsMenu(menu.Screen):
                     global game_menu
                     game_menu = MainMenu(screen)
 
+log_file.write("All Menus Loaded")
 game_menu = LoadingMenu(screen)
 
 def main():
+    log_file.write("Enter Core Loop")
     while True:
-        dt = delta_time(clock, 60)
+        try:
+            dt = delta_time(clock, 60)
 
-        screen.fill((100, 100, 100))
+            screen.fill((100, 100, 100))
 
-        for event in pygame.event.get():
-            default_events(event)
-            game_menu.events(event, dt)
-        
-        game_menu.draw()
-        
-        pygame.display.update()
+            for event in pygame.event.get():
+                default_events(event)
+                game_menu.events(event, dt)
+
+            game_menu.draw()
+
+            pygame.display.update()
+        except Exception as e:
+            log_file.write(f"Exception: {e}", level="ERROR")
+            log_file.write(traceback.format_exc())
+            raise e
 
 if __name__ == "__main__":
     main().run()
+    log_file.write("Exiting")
