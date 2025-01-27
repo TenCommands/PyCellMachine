@@ -133,6 +133,8 @@ class MainMenu(menu.Screen):
                 if button.id == "exit_button":
                     pygame.quit()
                     sys.exit()
+                if button.id == "play_button":
+                    game_menu = PlayMenu(screen)
                 if button.id == "settings_button":
                     game_menu = SettingsMenu(screen)
                 if button.id == "texturepacks_button":
@@ -141,6 +143,110 @@ class MainMenu(menu.Screen):
                     game_menu = ModsMenu(screen)
                 if button.id == "credits_button":
                     game_menu = CreditsMenu(screen)
+
+class PlayMenu(menu.Screen):
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.add_object(menu.Button(
+            "back_button",
+            (150, 50),
+            (200, 50),
+            texture=tx.asset("ui/button.png"),
+            splices=tx.data("ui/button.json"),
+            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+        ), "button")
+        self.add_object(menu.Button(
+            "built_in_button",
+            (menu.screen_size()[0] // 2 - 200, 250),
+            (60, 60),
+            texture=tx.asset("ui/button.png"),
+            splices=tx.data("ui/button.json"),
+            font_size=20, font_color=(255,255,255), text='', font='Monocraft'
+        ), "button")
+        self.add_object(menu.Image(
+            "built_in_icon",
+            (menu.screen_size()[0] // 2 - 200, 250),
+            (50, 50),
+            texture=tx.get_resource_path(r".\_internal\assets\built_in.png"),
+        ), "image")
+        self.add_object(menu.Button(
+            "import_level_button",
+            (menu.screen_size()[0] // 2, 250),
+            (60, 60),
+            texture=tx.asset("ui/button.png"),
+            splices=tx.data("ui/button.json"),
+            font_size=20, font_color=(255,255,255), text='', font='Monocraft'
+        ), "button")
+        self.add_object(menu.Image(
+            "import_level_icon",
+            (menu.screen_size()[0] // 2, 250),
+            (50, 50),
+            texture=tx.get_resource_path(r".\_internal\assets\import.png"),
+        ), "image")
+        self.add_object(menu.Button(
+            "create_level_button",
+            (menu.screen_size()[0] // 2 + 200, 250),
+            (60, 60),
+            texture=tx.asset("ui/button.png"),
+            splices=tx.data("ui/button.json"),
+            font_size=20, font_color=(255,255,255), text='', font='Monocraft'
+        ), "button")
+        self.add_object(menu.Image(
+            "create_level_icon",
+            (menu.screen_size()[0] // 2 + 200, 250),
+            (50, 50),
+            texture=tx.get_resource_path(r".\_internal\assets\create.png"),
+        ), "image")
+    def draw(self):
+        self.render()
+    def events(self, event, deltaTime):
+        self.update(event)
+        for button in self.objects['button']:
+            if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
+                global game_menu
+                if button.id == "back_button":
+                    game_menu = MainMenu(screen)
+                if button.id == "create_level_button":
+                    game_menu = CreateLevelMenu(screen)
+
+class CreateLevelMenu(menu.Screen):
+    def __init__(self, screen):
+        super().__init__(screen)
+        self.add_object(menu.Button(
+            "back_button",
+            (150, 50),
+            (200, 50),
+            texture=tx.asset("ui/button.png"),
+            splices=tx.data("ui/button.json"),
+            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+        ), "button")
+        self.add_object(menu.Textbox(
+            "width_textbox",
+            (menu.screen_size()[0] // 2 - 120, 250),
+            (200, 50),
+            texture=tx.asset("ui/keybind.png"),
+            splices=tx.data("ui/keybind.json"),
+            font_size=20, font_color=(255,255,255), font='Monocraft'
+        ), "textbox")
+        self.add_object(menu.Textbox(
+            "height_textbox",
+            (menu.screen_size()[0] // 2 + 120, 250),
+            (200, 50),
+            texture=tx.asset("ui/keybind.png"),
+            splices=tx.data("ui/keybind.json"),
+            font_size=20, font_color=(255,255,255), font='Monocraft'
+        ), "textbox")
+    
+    def draw(self):
+        self.render()
+    
+    def events(self, event, deltaTime):
+        self.update(event)
+        for button in self.objects['button']:
+            if button.is_hover() and event.type == pygame.MOUSEBUTTONDOWN:
+                global game_menu
+                if button.id == "back_button":
+                    game_menu = PlayMenu(screen)
 
 class SettingsMenu(menu.Screen):
     def __init__(self, screen):
