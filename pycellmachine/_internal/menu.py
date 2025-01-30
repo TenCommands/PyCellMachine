@@ -1,4 +1,5 @@
 import pygame, sys
+import pygame.scrap
 from win32api import GetSystemMetrics
 from . import textures as tx
 
@@ -390,6 +391,24 @@ class Textbox(Object):
             self.clicked = True
             return
         if event.type == pygame.KEYDOWN and self.clicked:
+            if event.key == pygame.K_c and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                pygame.scrap.put_text(self.text)
+                return
+
+            if event.key == pygame.K_v and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                clipboard_text = pygame.scrap.get_text()
+                if clipboard_text:
+                    if self.allowed is None:
+                        self.text += clipboard_text
+                    else:
+                        self.text += ''.join(c for c in clipboard_text if c in self.allowed)
+                return
+
+            if event.key == pygame.K_x and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                pygame.scrap.put_text(self.text)
+                self.text = ''
+                return
+
             if event.key == pygame.K_BACKSPACE:
                 self.text = self.text[:-1]
                 self.backspace = True
