@@ -1,10 +1,12 @@
 import pygame
 #pygame.init()
 import sys, os, json, traceback
+from pycellmachine._internal import get_resource_path
 from pycellmachine._internal import logging
 from pycellmachine._internal import menu
 from pycellmachine._internal import textures as tx
 from pycellmachine._internal import settings
+from pycellmachine._internal import lang
 from pycellmachine._internal import mods
 
 log_file = logging.log_file("game.log")
@@ -41,7 +43,7 @@ class LoadingMenu(menu.Screen):
     def __init__(self, screen):
         super().__init__(screen)
 
-        self.loading_image = pygame.image.load(tx.get_resource_path(r'.\_internal\assets\title.png'))
+        self.loading_image = pygame.image.load(get_resource_path(r'.\_internal\assets\title.png'))
     
     def draw(self):
         if pygame.time.get_ticks() / 1000 > 5:
@@ -75,7 +77,7 @@ class MainMenu(menu.Screen):
             (200, 30),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Play', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('main.play'), font='Monocraft'
         ), "button")
         self.add_object(menu.Button(
             "settings_button",
@@ -83,7 +85,7 @@ class MainMenu(menu.Screen):
             (200, 30),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Settings', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('main.settings'), font='Monocraft'
         ), "button")
         self.add_object(menu.Button(
             "texturepacks_button",
@@ -91,7 +93,7 @@ class MainMenu(menu.Screen):
             (200, 30),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Texture Packs', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('main.texture_packs'), font='Monocraft'
         ), "button")
         self.add_object(menu.Button(
             "mods_button",
@@ -99,7 +101,7 @@ class MainMenu(menu.Screen):
             (200, 30),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Mods', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('main.mods'), font='Monocraft'
         ), "button")
         self.add_object(menu.Button(
             "credits_button",
@@ -107,7 +109,7 @@ class MainMenu(menu.Screen):
             (200, 30),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Credits', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('main.credits'), font='Monocraft'
         ), "button")
         self.add_object(menu.Button(
             "exit_button",
@@ -115,7 +117,7 @@ class MainMenu(menu.Screen):
             (200, 30),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Leave Game', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('main.quit'), font='Monocraft'
         ), "button")
 
     def draw(self):
@@ -153,7 +155,7 @@ class PlayMenu(menu.Screen):
             (200, 50),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('back'), font='Monocraft'
         ), "button")
         self.add_object(menu.Button(
             "built_in_button",
@@ -222,7 +224,7 @@ class BuiltInLevelMenu(menu.Screen):
             (200, 50),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('back'), font='Monocraft'
         ), "button")
     
     def draw(self):
@@ -245,7 +247,7 @@ class LoadLevelMenu(menu.Screen):
             (200, 50),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('back'), font='Monocraft'
         ), "button")
         self.add_object(menu.Textbox(
             "code_textbox",
@@ -261,7 +263,7 @@ class LoadLevelMenu(menu.Screen):
             (200, 50),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Load', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('button.load'), font='Monocraft'
         ), "button")
     
     def draw(self):
@@ -284,7 +286,7 @@ class CreateLevelMenu(menu.Screen):
             (200, 50),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('back'), font='Monocraft'
         ), "button")
         self.add_object(menu.Textbox(
             "width_textbox",
@@ -299,7 +301,7 @@ class CreateLevelMenu(menu.Screen):
             "width_text",
             (menu.screen_size()[0] // 2 - 120, 340),
             (200, 50),
-            font_size=20, font_color=(255,255,255), font='Monocraft', text="Width:"
+            font_size=20, font_color=(255,255,255), font='Monocraft', text=lang.load_lang('create.width')
         ), "text")
         self.add_object(menu.Textbox(
             "height_textbox",
@@ -314,7 +316,7 @@ class CreateLevelMenu(menu.Screen):
             "height_text",
             (menu.screen_size()[0] // 2 + 120, 340),
             (200, 50),
-            font_size=20, font_color=(255,255,255), font='Monocraft', text="Height:"
+            font_size=20, font_color=(255,255,255), font='Monocraft', text=lang.load_lang('create.height')
         ), "text")
         self.add_object(menu.Button(
             "create_button",
@@ -424,7 +426,7 @@ class SettingsMenu(menu.Screen):
             "settings_title",
             (screen_size()[0]//2, 50),
             (200, 30),
-            text="Settings",
+            text=lang.load_lang('settings.title'),
             font_color=(255,255,255),
             font_size=80,
             font='Monocraft'
@@ -444,7 +446,7 @@ class SettingsMenu(menu.Screen):
             (200, 50),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('back'), font='Monocraft'
         ), "button")
 
     def draw(self):
@@ -514,7 +516,8 @@ class TexturepacksMenu(menu.Screen):
         ), "button")
 
         y = 50
-        for texturepack in os.listdir(tx.get_resource_path(rf"./texturepacks")):
+        texturepacks = ['default'] + os.listdir(tx.get_resource_path(rf"./texturepacks"))
+        for texturepack in texturepacks:
             y += 110
             self.add_object(menu.Box(
                 "text_" + texturepack,

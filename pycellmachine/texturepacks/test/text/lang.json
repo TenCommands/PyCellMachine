@@ -1,0 +1,15 @@
+{
+    "font": "Monocraft",
+    "scale": 1.0,
+    "en": {
+        "language": "English",
+        "percent": "{0}%",
+        "main.back": "B",
+        "main.play": "P",
+        "main.settings": "S",
+        "main.texture_packs": "TP",
+        "main.mods": "M",
+        "main.credits": "C",
+        "main.quit": "L"
+    }
+}

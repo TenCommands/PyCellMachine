@@ -25,6 +25,10 @@
             "zoom_sensitivity": 0.5
         },
         "other": {
+            "language": [
+                "en",
+                "en"
+            ],
             "export_format": [
                 "V3",
                 "V3",
