@@ -3,3 +3,5 @@ pycellmachine/_internal/menus/__pycache__/
 pycellmachine/_internal/__pycache__
 pycellmachine/build
 pycellmachine/dist
+/build
+/dist
