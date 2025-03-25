@@ -1,0 +1,8 @@
+{
+    "name": "Mover",
+    "description": "Moves in a single direction",
+    "texture": {
+        "mode": "rotate",
+        "image": "mover.png"
+    }
+}
