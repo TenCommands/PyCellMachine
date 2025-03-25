@@ -1,0 +1,8 @@
+{
+    "name": "Slider",
+    "description": "Slide is a cell that is a combination of the Push cell and Immobile cell. It can be pushed by other cells, but only in the direction it is facing.",
+    "texture": {
+        "mode": "rotate",
+        "image": "slide.png"
+    }
+}

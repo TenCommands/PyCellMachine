@@ -9,10 +9,10 @@ from pycellmachine._internal import settings
 from pycellmachine._internal import lang
 from pycellmachine._internal import mods
 
-log_file = logging.log_file("game.log")
+#log_file = logging.#log_file("game.log")
 
-log_file.clear()
-log_file.write("PyCellMachine v0.0.1")
+#log_file.clear()
+#log_file.write("PyCellMachine v0.0.1")
 
 #appicon = pygame.image.load(r'./_internal/assets/logo.png')
 pygame.display.set_caption('PyCellMachine')
@@ -263,7 +263,7 @@ class LoadLevelMenu(menu.Screen):
             (200, 50),
             texture=tx.asset("ui/button.png"),
             splices=tx.data("ui/button.json"),
-            font_size=20, font_color=(255,255,255), text=lang.load_lang('button.load'), font='Monocraft'
+            font_size=20, font_color=(255,255,255), text=lang.load_lang('play.load.load'), font='Monocraft'
         ), "button")
     
     def draw(self):
@@ -295,13 +295,14 @@ class CreateLevelMenu(menu.Screen):
             texture=tx.asset("ui/keybind.png"),
             splices=tx.data("ui/keybind.json"),
             allow=['0','1','2','3','4','5','6','7','8','9'],
+            max_length=5,
             font_size=20, font_color=(255,255,255), font='Monocraft'
         ), "textbox")
         self.add_object(menu.Text(
             "width_text",
             (menu.screen_size()[0] // 2 - 120, 340),
             (200, 50),
-            font_size=20, font_color=(255,255,255), font='Monocraft', text=lang.load_lang('create.width')
+            font_size=20, font_color=(255,255,255), font='Monocraft', text=lang.load_lang('play.create.width')
         ), "text")
         self.add_object(menu.Textbox(
             "height_textbox",
@@ -310,13 +311,14 @@ class CreateLevelMenu(menu.Screen):
             texture=tx.asset("ui/keybind.png"),
             splices=tx.data("ui/keybind.json"),
             allow=['0','1','2','3','4','5','6','7','8','9'],
+            max_length=5,
             font_size=20, font_color=(255,255,255), font='Monocraft'
         ), "textbox")
         self.add_object(menu.Text(
             "height_text",
             (menu.screen_size()[0] // 2 + 120, 340),
             (200, 50),
-            font_size=20, font_color=(255,255,255), font='Monocraft', text=lang.load_lang('create.height')
+            font_size=20, font_color=(255,255,255), font='Monocraft', text=lang.load_lang('play.create.height')
         ), "text")
         self.add_object(menu.Button(
             "create_button",
@@ -474,7 +476,7 @@ class SettingsMenu(menu.Screen):
                         obj.values.insert(0, obj.values[obj.value])
                     _settings['options'][section][name] = obj.values
         settings.save(_settings)
-        log_file.write('Settings saved')
+        #log_file.write('Settings saved')
 
     def events(self, event, deltaTime):
         self.update(event)
@@ -491,7 +493,6 @@ class SettingsMenu(menu.Screen):
         for slider_text, slider in zip(self.objects['slider_text'], self.objects['slider']):
             slider_text.text = str(slider.value)+'%'
             
-
 class TexturepacksMenu(menu.Screen):
     def __init__(self, screen):
         super().__init__(screen)
@@ -582,7 +583,7 @@ class TexturepacksMenu(menu.Screen):
                     _settings = settings.get()
                     _settings['texturepack'] = box.id.split('_')[1]
                     settings.save(_settings)
-                    log_file.write("Texturepack set to " + box.id.split('_')[1])
+                    #log_file.write("Texturepack set to " + box.id.split('_')[1])
 
 class ModsMenu(menu.Screen):
     def __init__(self, screen):
@@ -674,11 +675,11 @@ class ModsMenu(menu.Screen):
                 if box.value == True and _settings['mods'].count(box.id.split('_')[1]) == 0:
                     _settings['mods'].append(box.id.split('_')[1])
                     settings.save(_settings)
-                    log_file.write("Mod " + box.id.split('_')[1] + " enabled")
+                    #log_file.write("Mod " + box.id.split('_')[1] + " enabled")
                 elif box.value == False and _settings['mods'].count(box.id.split('_')[1]) == 1:
                     _settings['mods'].remove(box.id.split('_')[1])
                     settings.save(_settings)
-                    log_file.write("Mod " + box.id.split('_')[1] + " disabled")
+                    #log_file.write("Mod " + box.id.split('_')[1] + " disabled")
 
 class CreditsMenu(menu.Screen):
     def __init__(self, screen):
@@ -702,15 +703,15 @@ class CreditsMenu(menu.Screen):
             font_size=20, font_color=(255,255,255), text='Back', font='Monocraft'
         ), "button")
         y = 110
-        for line in open(tx.get_resource_path(rf"./credits.txt"), 'r').readlines():
+        for line in lang.load_lang("credits.text"):
             y += 50
             self.add_object(menu.Text(
                 "credits_text",
                 (screen_size()[0]//2, y),
                 (200, 30),
-                text=line,
+                text=line if not line.startswith('-') else line[1:],
                 font_color=(255,255,255),
-                font_size=40,
+                font_size=40 if not line.startswith('-') else 24,
                 font='Monocraft'
             ), "text")
     
@@ -727,11 +728,11 @@ class CreditsMenu(menu.Screen):
                     global game_menu
                     game_menu = MainMenu(screen)
 
-log_file.write("All Menus Loaded")
+#log_file.write("All Menus Loaded")
 game_menu = LoadingMenu(screen)
 
 def main():
-    log_file.write("Enter Core Loop")
+    #log_file.write("Enter Core Loop")
     while True:
         try:
             dt = delta_time(clock, 60)
@@ -746,10 +747,10 @@ def main():
 
             pygame.display.update()
         except Exception as e:
-            log_file.write(f"Exception: {e}", level="ERROR")
-            log_file.write(traceback.format_exc())
+            #log_file.write(f"Exception: {e}", level="ERROR")
+            #log_file.write(traceback.format_exc())
             raise e
 
 if __name__ == "__main__":
     main().run()
-    log_file.write("Exiting")
+    #log_file.write("Exiting")

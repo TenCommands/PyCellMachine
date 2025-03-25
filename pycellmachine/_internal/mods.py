@@ -4,7 +4,7 @@ from . import textures as tx
 
 enabled = settings.get()['mods']
 
-###
+"""
 {
     "format": 1,
     "name": "Conway's GoL",
@@ -14,7 +14,7 @@ enabled = settings.get()['mods']
     "update_url": "https://github.com/tencommands/pycellmachine/mods/conway",
     "thumbnail_type": "gif"
 }
-###
+"""
 
 def is_override(asset):
     # if the active texturepack has the same asset as the mod, return true

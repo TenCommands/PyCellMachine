@@ -1,5 +1,8 @@
 # ![](/git_assets/tx_logo.png)
 
+## How It Works
+
+Texture Packs work by overwriting the default textures in the game with your own. By default the game looks for the texture in the active texture pack folder. If the texture is not found in the active texture pack folder, it will use the default texture.
 
 ## File organization
 ![Namespace Folder](/git_assets/folder.png) `namespace`
@@ -50,3 +53,29 @@ This is how the image file will be broken up based on the above splicing data.
 ![Spliced](/git_assets/splicing/spliced.png)
 
 ## Modded
+
+![Modded](/git_assets/folder_.png) `modded`
+
+![](/git_assets/-.png) ![Namespace Folder](/git_assets/folder.png) `default`
+
+![](/git_assets/blank.png) ![](/git_assets/I-.png) ![Mover Cell](/git_assets/folder.png) `mover`
+
+![](/git_assets/blank.png) ![](/git_assets/I.png) ![](/git_assets/I-.png) ![Mover Image](/git_assets/png.png) `mover.png`
+
+![](/git_assets/blank.png) ![](/git_assets/I.png) ![](/git_assets/-.png) ![Mover Splicing](/git_assets/png.png) `mover.bloom.png`
+
+![](/git_assets/blank.png) ![](/git_assets/-.png) ![Slider Cell](/git_assets/folder.png) `slider`
+
+![](/git_assets/blank.png) ![](/git_assets/blank.png) ![](/git_assets/I-.png) ![Slider Image](/git_assets/png.png) `slider.png`
+
+![](/git_assets/blank.png) ![](/git_assets/blank.png) ![](/git_assets/-.png) ![Slider Splicing](/git_assets/png.png) `slider.bloom.png`
+
+#
+
+`default` is the namespace of the mod.
+
+`mover` and `slider` are the names of the cells you wish to overwrite textures for.
+
+In those folders you can place a `.png` file which has the same name as the texture you wish to overwrite. In thise case it's the same as the name of the cell.
+
+The files ending in `.bloom.png` are files that indicate the how the bloom is applied to the texture. When the bloom setting is enabled the texture will be multiplied by the bloom texture.

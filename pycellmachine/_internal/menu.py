@@ -357,7 +357,7 @@ class Dropdown(Object):
             self.clicked = True
         
 class Textbox(Object):
-    def __init__(self, id, pos, size, default='', texture=None, splices=None, allow=None, font_size=20, font_color=(255,255,255), font='Arial'):
+    def __init__(self, id, pos, size, default='', texture=None, splices=None, allow=None, max_length=None, font_size=20, font_color=(255,255,255), font='Arial'):
         self.clicked = False
         self.id = id
         self.x = pos[0]
@@ -371,6 +371,7 @@ class Textbox(Object):
             tx.splice(self.texture, splices['hover'])
         ]
         self.allowed = allow
+        self.max_length = max_length
         self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
         self.rect = pygame.Rect(self.x - self.width/2, self.y - self.height/2, self.width, self.height)
@@ -418,6 +419,9 @@ class Textbox(Object):
                 self.text += event.unicode
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.clicked = False
+        if event:
+            if self.max_length is not None and len(self.text) > self.max_length:
+                self.text = self.text[:self.max_length]
         
 class Text(Object):
     def __init__(self, id, pos, size, text='', font_size=20, font_color=(255,255,255), font='Arial', align='center'):

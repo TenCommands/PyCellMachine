@@ -90,6 +90,15 @@
         "settings.keybinds.selection_move_right": "Move Selection Right",
         "texturepacks.title": "Texture Packs",
         "mods.title": "Mods",
-        "credits.title": "Credits"
+        "credits.title": "Credits",
+        "credits.text": [
+            "TauCommands",
+            "-Programming",
+            "-Textures",
+            "----",
+            "Sam Hogan",
+            "-Original Game",
+            "----"
+        ]
     }
 }
