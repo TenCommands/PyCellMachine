@@ -62,15 +62,6 @@ def deg_to_vec2(deg: float) -> vec2:
     y = math.sin(rad)
     return vec2(x, y)
 
-# create event handler decorator which gives the event information to the function
-# the event handler decorator should be used on a function that takes an event as an argument
-#def event_handler(event_type): 
-#    def decorator(func):
-#        def wrapper(self, event):
-#            if event.type == event_type:
-#                func(self, event)
-#                return func(self, event)
-
 class event:
     def __init__(self, *args):
         self.type = args[0]
