@@ -1,0 +1,8 @@
+{
+    "name": "Push",
+    "description": "Can be pushed in any direction",
+    "texture": {
+        "mode": "rotate",
+        "image": "slide.png"
+    }
+}

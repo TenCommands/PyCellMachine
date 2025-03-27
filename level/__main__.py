@@ -26,12 +26,18 @@ def default_events(event):
 
 def main():
 
-    grid = api.Grid(30,10, scale=2)
+    grid = api.Grid(10,6, scale=5)
 
     cells = api.import_mods()
-    grid.add_cell(cells['ten.default.slider']((2, 0), (0, 1)))
-    grid.add_cell(cells['ten.default.slider']((3, 0), (1, 0)))
     grid.add_cell(cells['ten.default.mover']((0, 0), (1, 0)))
+    grid.add_cell(cells['ten.default.push']((4, 0), (1, 0)))
+    grid.add_cell(cells['ten.default.generator']((4, 1), (0, -1)))
+    grid.add_cell(cells['ten.default.slider']((5, 2), (1, 0)))
+    grid.add_cell(cells['ten.default.push']((5, 5), (1, 0)))
+    grid.add_cell(cells['ten.default.generator']((5, 4), (0, 1)))
+    grid.add_cell(cells['ten.default.slider']((4, 3),(0, 1)))
+    grid.add_cell(cells['ten.default.generator']((3, 0), (-1, 0)))
+    grid.add_cell(cells['ten.default.generator']((6, 5), (1, 0)))
 
     while True:
         dt = delta_time(clock, 60)
@@ -42,6 +48,7 @@ def main():
         grid.tick()
         grid.draw(screen)
         pygame.display.update()
+        clock.tick(60)
     
 if __name__ == '__main__':
     main()

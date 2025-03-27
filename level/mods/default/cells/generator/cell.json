@@ -1,0 +1,8 @@
+{
+    "name": "Generator",
+    "description": "Duplicates the cell behind it to be infront of it.",
+    "texture": {
+        "mode": "rotate",
+        "image": "generator.png"
+    }
+}
