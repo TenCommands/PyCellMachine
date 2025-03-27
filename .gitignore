@@ -6,7 +6,9 @@ pycellmachine/dist
 /build
 /dist
 /level/__pycache__/
-/level/mods/default/cells/*/__pycache__/
 level/__pycache__/__main__.cpython-312.pyc
 level/__pycache__/api.cpython-312.pyc
-level/mods/default/cells/*/__pycache__/cell.cpython-312.pyc
+level/mods/default/cells/*/__pycache__/
+level/__pycache__/
+level/mods/default/cells/mover/__pycache__/
+level/mods/default/cells/slider/__pycache__/
