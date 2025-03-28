@@ -30,9 +30,9 @@
                 "en"
             ],
             "export_format": [
-                "V3",
-                "V3",
-                "V4"
+                "Py1",
+                "Py1",
+                "..."
             ]
         },
         "keybinds": {

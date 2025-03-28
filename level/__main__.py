@@ -28,7 +28,7 @@ def main():
 
     grid = api.Grid(10,6, scale=5)
 
-    cells = api.import_mods()
+    cells = api.__all_cells__
     grid.add_cell(cells['ten.default.mover']((0, 0), (1, 0)))
     grid.add_cell(cells['ten.default.push']((4, 0), (1, 0)))
     grid.add_cell(cells['ten.default.generator']((4, 1), (0, -1)))

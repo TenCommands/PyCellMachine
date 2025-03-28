@@ -20,6 +20,8 @@ def import_mods():
                         print(f'Failed to import {module_name} from {mod}.{cell}: {e}')
     return _imports
 
+__all_cells__ = import_mods()
+
 def load_image(file, path):
     return pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(file)), path))
 
@@ -72,13 +74,14 @@ class event:
 
 class Grid:
     _registry = []
-    def __init__(self, width: int, height: int, scale: int=1, offset: vec2=vec2(0, 0)):
+    def __init__(self, width: int, height: int, scale: int=1):
         self.width = width
         self.height = height
         self.scale = scale
         self.x = 0
         self.y = 0
-        self.grid = []
+        self.cells = []
+        
         Grid._registry.append(self)
     
     @classmethod
@@ -86,53 +89,53 @@ class Grid:
         return cls._registry
 
     def move(self, x: int, y: int):
-        self.x += x
-        self.y += y
-    
-    def events(self, event):
-        if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-            # Store the key state when keys are pressed or released
-            self._update_key_states()
-        
-        # Check key states every frame, not just on KEYDOWN events
-        self._process_movement_from_keys()
-    
-    def _update_key_states(self):
-        # Get the current state of all keys
-        self.key_states = pygame.key.get_pressed()
-    
-    def _process_movement_from_keys(self):
-        # Only proceed if key_states has been initialized
-        if not hasattr(self, 'key_states'):
-            self._update_key_states()
-            return
-            
-        keys = settings['options']['keybinds']
-        
-        # Check if the movement keys are currently pressed
-        if self.key_states[getattr(pygame, 'K_' + keys['up'].lower())]:
-            self.move(0, -1)
-        if self.key_states[getattr(pygame, 'K_' + keys['left'].lower())]:
-            self.move(-1, 0)
-        if self.key_states[getattr(pygame, 'K_' + keys['down'].lower())]:
-            self.move(0, 1)
-        if self.key_states[getattr(pygame, 'K_' + keys['right'].lower())]:
-            self.move(1, 0)
+        pass
 
+    def events(self, event):
+        pass
 
     def draw(self, screen):
+        
         render_properties = {
                 'screen': screen,
                 'scale': self.scale*16,
                 'offset': (self.x, self.y),
                 'grid': self
             }
-        # render a gray square for each cell position
+
+        # Load the background image (only once)
+        if not hasattr(self, 'background_image'):
+            self.background_image = pygame.image.load(r"D:\GitHub\PyCellMachine\level\_internal\assets\default\assets\level\background.png").convert_alpha()
+
+        # Get screen height for coordinate inversion
+        screen_height = screen.get_height()
+
+        # Render the background image for each cell position
         for y in range(self.height):
             for x in range(self.width):
-                pygame.draw.rect(screen, (50,50,50), (self.x+x*(self.scale*16), self.y+y*(self.scale*16), (self.scale*16), (self.scale*16)))
-        
-        for cell in self.grid:
+                # Scale the background image to match the cell size
+                scaled_bg = pygame.transform.scale(
+                    self.background_image, 
+                    (int(self.scale*16), int(self.scale*16))
+                )
+
+                # Calculate x position (same as before)
+                x_pos = self.x + x*(self.scale*16)
+
+                # Calculate y position (inverted to start from bottom)
+                # First, calculate the position from the top
+                top_y = self.y + y*(self.scale*16)
+
+                # Then invert it to position from the bottom
+                # We need to account for the grid's total height
+                grid_height_px = self.height * (self.scale*16)
+                y_pos = screen_height - top_y - (self.scale*16)
+
+                # Blit the scaled background at the calculated position
+                screen.blit(scaled_bg, (x_pos, y_pos))
+
+        # Render all cells
+        for cell in self.cells:
             cell.render(render_properties)
 
     def tick(self):
@@ -151,27 +154,75 @@ class Grid:
                 self.last_tick_time = current_time
 
                 # Process ticks for all cells
-                for cell in self.grid:
+                for cell in self.cells:
                     if hasattr(cell, 'tick'):
                         cell.tick()
         except Exception as e:
             print(f"Error {e}")
-
     
     def add_cell(self, cell):
         cell.grid = self
-        self.grid.append(cell)
+        self.cells.append(cell)
         # sort grid based on cell priority
-        self.grid.sort(key=lambda x: x.priority)
+        self.cells.sort(key=lambda x: x.priority)
     
     def remove_cell(self, cell):
-        self.grid.remove(cell)
+        self.cells.remove(cell)
     
     def get_cell(self, *args):
-        for cell in self.grid:
+        for cell in self.cells:
             if cell.pos == args[0]:
                 return cell
         return None
+    
+    def save_code(self) -> str:
+        """Creates a string from the level"""
+        format_version = settings['options']['other']['export_format']
+        if format_version == "Py1":
+            width = self.width
+            height = self.height
+            cells = self.cells
+            unique_cells = list(set([cell.id for cell in cells]))
+            cell_codes = {}
+            for i, cell in enumerate(unique_cells):
+                cell_codes[cell] = {'b64':base64.b64encode(cell.encode()).decode(),'index':i}
+            cell_info = []
+            for cell in cells:
+                cell_info.append(f"({cell_codes[cell.id]['index']};{cell.pos[0]};{cell.pos[1]};{"R" if cell.dir[0] == 1 else "L" if cell.dir[0] == -1 else "U" if cell.dir[1] == 1 else "D" if cell.dir[1] == -1 else "?"});")
+            code = str({format_version})+"!"+str({width})+"!"+str({height})+"!"+str({f"{cell['b64']};{cell['index']};" for cell in cell_codes.values()})+"!"+str({cell for cell in cell_info})+"!"
+        return code
+
+    def load_code(self, code: str) -> None:
+        """Loads a level from a string"""
+        code = code.split("!")
+        format_version = code[0]
+        if format_version == "Py1":
+            width = code[1]
+            height = code[2]
+            cell_codes = code[3]
+            cell_info = code[4]
+            cell_codes = cell_codes.split(";")
+            cell_codes = {
+                cell_codes[i+1]:base64(cell_codes[i]).decode() for i in range(0, len(cell_codes), 2)
+            }
+            cell_info = cell_info.split(";")
+            cell_info = [
+                (cell_info[i].split("(")[1].split(")")[0].split(";") for i in range(len(cell_info)))
+            ]
+            directions = {"R":vec2(1,0), "L":vec2(-1,0), "U":vec2(0,1), "D":vec2(0,-1)}
+            cell_info = [
+                (
+                    cell_codes[cell_info[i][0]],
+                    vec2(int(cell_info[i][1]), int(cell_info[i][2])),
+                    directions[cell_info[i][3]]
+                ) for i in range(len(cell_info))
+            ]
+            for cell in self.cells:
+                del cell
+            self.cells = []
+            for cell in cell_info:
+                self.add_cell(__all_cells__[cell[0]](cell[1], cell[2]))
+            return
 
 
 class Cell:
@@ -212,8 +263,8 @@ class Cell:
             self.pos = args[0]
 
     def move(self, *args):
-        """Moves the cell if the destination is within grid boundaries.
-        Returns True if the movement was successful, False otherwise."""
+        """Moves the cell if the destination is within grid boundaries.\n\n
+        Returns whether or not the move was successful."""
         # Calculate the new position
         if len(args) == 1:
             # Assume args[0] is a vec2
@@ -222,12 +273,12 @@ class Cell:
             return False
         
         # Check if the cell has a reference to its grid
-        if hasattr(self, 'grid') and self.grid is not None:
+        if hasattr(self, 'grid') and self.cells is not None:
             # Check if the new position is within grid boundaries
-            if 0 <= new_pos[0] < self.grid.width and 0 <= new_pos[1] < self.grid.height:
+            if 0 <= new_pos[0] < self.cells.width and 0 <= new_pos[1] < self.cells.height:
                 # Check if there's already a cell at the new position
                 cell_at_pos = None
-                for cell in self.grid.grid:
+                for cell in self.cells.grid:
                     if hasattr(cell, 'pos') and cell.pos == new_pos:
                         cell_at_pos = cell
                         break
@@ -245,7 +296,6 @@ class Cell:
                     # Try to push the cell in the same direction
                     if push_dir and hasattr(cell_at_pos, 'move'):
                         if cell_at_pos.move(push_dir):
-                            # The cell was successfully pushed, we can move to its previous position
                             self.pos = new_pos
                             return True
                         else:
@@ -263,62 +313,34 @@ class Cell:
                 return False
         else:
             # If there's no grid reference, just update the position
-            # This is the original behavior
             self.pos = new_pos
-            return True  # Assume success in this case
-        
-        return False  # Default return if none of the above conditions are met
+            return True
 
     def render(self, render_properties):
         """Default render method for all cells. Draws a rectangle with the texture of the cell. CAN BE OVERRIDDEN."""
         if isinstance(self.texture, tuple):
             pygame.draw.rect(render_properties['screen'], self.texture, (self.x, self.y, self.width, self.height))
         else:
-            # Get screen height to calculate inverted y-coordinate
             screen_height = render_properties['screen'].get_height()
-
-            # Scale the texture
             scaled_texture = pygame.transform.scale(
                 self.texture,
                 (render_properties['scale'], render_properties['scale'])
             )
-
-            # Determine rotation angle based on self.dir
             rotation_angle = 0
             if hasattr(self, 'dir'):
-                if self.dir == (0, -1):  # up
-                    rotation_angle = 90  # Change from 0 to 270
-                elif self.dir == (1, 0):  # right
-                    rotation_angle = 0    # Change from 90 to 0
-                elif self.dir == (0, 1):  # down
-                    rotation_angle = 270   # Change from 180 to 90
-                elif self.dir == (-1, 0):  # left
-                    rotation_angle = 180  # Change from 270 to 180
-            # Rotate the scaled texture
+                if self.dir == (0, -1):
+                    rotation_angle = 90
+                elif self.dir == (1, 0):
+                    rotation_angle = 0
+                elif self.dir == (0, 1):
+                    rotation_angle = 270
+                elif self.dir == (-1, 0):
+                    rotation_angle = 180
             rotated_texture = pygame.transform.rotate(scaled_texture, rotation_angle)
-
-            # Calculate position with inverted y-coordinate
-            # Original: y increases downward
-            # New: y increases upward
             x_pos = render_properties['offset'][0] + self.pos[0] * render_properties['scale']
-
-            # Invert the y-coordinate:
-            # 1. Calculate the position from the top (as before)
             top_y = render_properties['offset'][1] + self.pos[1] * render_properties['scale']
-
-            # 2. Invert it to position from the bottom
-            # We need to consider:
-            #   - The grid's height in cells
-            #   - The cell's size (scale)
-            #   - The grid's offset
-
-            # Calculate the total height of the grid in pixels
             grid_height_px = render_properties['grid'].height * render_properties['scale']
-
-            # Calculate the inverted y position
             y_pos = screen_height - top_y - render_properties['scale']
-
-            # Blit the scaled texture at the calculated position
             render_properties['screen'].blit(
                 rotated_texture,
                 (x_pos, y_pos)
@@ -327,3 +349,8 @@ class Cell:
     def play_sound(self, sound):
         """Plays a sound."""
         pygame.mixer.Sound(sound).play()
+    
+    def delete(self):
+        """Delete cell from memory"""
+        self.cells.grid.remove(self)
+        del self
